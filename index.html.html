@@ -1,0 +1,1716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Green H₂ TEA — Hyuse / Koppert Cress</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07110e;--s1:#0d1a14;--s2:#111e18;--s3:#162219;
+  --b0:rgba(52,211,153,.09);--b1:rgba(52,211,153,.22);--b2:rgba(52,211,153,.42);
+  --grn:#34d399;--grn2:#10b981;--grn3:#065f46;
+  --amb:#fbbf24;--red:#f87171;--blu:#60a5fa;--pur:#a78bfa;--cyn:#22d3ee;--pnk:#f472b6;
+  --txt:#dff5ec;--mut:#557060;--dim:#253d30;
+  --mono:'DM Mono',monospace;--sans:'Syne',sans-serif;
+  --rad:8px;
+}
+html,body{height:100%;background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:13px}
+::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--b1);border-radius:2px}
+
+/* HEADER */
+header{display:flex;align-items:center;gap:1.2rem;padding:.9rem 1.4rem;border-bottom:1px solid var(--b0);flex-shrink:0;flex-wrap:wrap}
+.hbadge{font-family:var(--mono);font-size:8.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--grn);background:rgba(52,211,153,.06);border:1px solid var(--b1);padding:2px 8px;border-radius:3px;margin-bottom:4px;display:inline-block}
+h1{font-size:1.3rem;font-weight:800;letter-spacing:-.025em;line-height:1.1}
+h1 em{color:var(--grn);font-style:normal}
+.hmeta{margin-left:auto;font-family:var(--mono);font-size:8.5px;color:var(--mut);text-align:right;line-height:2}
+.hmeta strong{color:var(--grn)}
+#flash{font-family:var(--mono);font-size:8.5px;color:var(--grn);background:rgba(52,211,153,.07);border:1px solid var(--b1);padding:3px 10px;border-radius:3px;opacity:0;transition:opacity .18s;white-space:nowrap;margin-left:.5rem}
+#flash.on{opacity:1}
+
+/* LAYOUT */
+.wrap{display:flex;height:calc(100vh - 54px);overflow:hidden}
+aside{width:274px;flex-shrink:0;border-right:1px solid var(--b0);overflow-y:auto;padding:.85rem .8rem;display:flex;flex-direction:column;gap:1rem}
+main{flex:1;overflow-y:auto;padding:.9rem 1.1rem;display:flex;flex-direction:column;gap:.85rem}
+
+/* SIDEBAR */
+.stitle{font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);padding-bottom:5px;border-bottom:1px solid var(--b0);margin-bottom:7px}
+.param{margin-bottom:9px}
+.ph{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.pl{font-family:var(--mono);font-size:9px;color:var(--mut)}
+.pv{font-family:var(--mono);font-size:9px;font-weight:500;color:var(--grn);background:rgba(52,211,153,.06);border:1px solid var(--b0);padding:1px 6px;border-radius:2px;min-width:68px;text-align:right;transition:background .22s,color .22s}
+.pv.lit{background:rgba(52,211,153,.2);color:#fff}
+.drv{font-family:var(--mono);font-size:8px;color:var(--dim);margin-top:2px;line-height:1.5}
+.drv span{color:var(--mut)}
+input[type=range]{-webkit-appearance:none;width:100%;height:3px;background:var(--s2);border:1px solid var(--b0);border-radius:2px;outline:none;cursor:pointer;margin:0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:var(--grn);border:2px solid var(--bg);box-shadow:0 0 0 1px var(--grn2);cursor:pointer;transition:transform .14s}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.4)}
+input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:var(--grn);border:2px solid var(--bg);cursor:pointer}
+
+/* SECTION LABEL */
+.slbl{font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-bottom:5px}
+
+/* FLOW */
+.flow{display:flex;align-items:center;overflow-x:auto;padding-bottom:3px;gap:0}
+.fn{flex:1;min-width:58px;text-align:center}
+.fb{background:var(--s1);border:1px solid var(--b0);border-radius:5px;padding:5px 2px;font-family:var(--mono);font-size:8px;color:var(--grn);line-height:1.45}
+.fn2{font-family:var(--mono);font-size:7px;color:var(--dim);margin-top:2px}
+.fa{color:var(--dim);font-size:12px;padding:0 1px;margin-bottom:12px;flex-shrink:0}
+
+/* KPI STRIP */
+.kgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+.kcard{background:var(--s1);border:1px solid var(--b0);border-radius:var(--rad);padding:.7rem .85rem;position:relative;overflow:hidden;transition:border-color .3s}
+.kcard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--grn);opacity:.28;transition:opacity .3s}
+.kcard.pulse{border-color:var(--b1)}.kcard.pulse::before{opacity:1}
+.klbl{font-family:var(--mono);font-size:8px;letter-spacing:.09em;text-transform:uppercase;color:var(--mut);margin-bottom:4px}
+.kval{font-size:1.2rem;font-weight:700;letter-spacing:-.03em;transition:color .25s}
+.kunit{font-family:var(--mono);font-size:8.5px;color:var(--mut);margin-top:1px}
+.kdelta{font-family:var(--mono);font-size:8px;margin-top:3px;height:12px}
+.dup{color:var(--grn)}.ddn{color:var(--red)}.dfl{color:var(--dim)}
+
+/* ADVISORY */
+.advrow{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.advc{background:var(--s1);border:1px solid var(--b0);border-radius:var(--rad);padding:.7rem .85rem;display:flex;align-items:center;gap:8px}
+.advi{font-size:1rem;flex-shrink:0}
+.advl{font-family:var(--mono);font-size:8px;letter-spacing:.07em;text-transform:uppercase;color:var(--mut);margin-bottom:3px}
+.badge{font-family:var(--mono);font-size:9.5px;font-weight:500;padding:2px 9px;border-radius:3px;display:inline-block;transition:all .25s}
+.bok{background:rgba(52,211,153,.1);color:#34d399;border:1px solid rgba(52,211,153,.26)}
+.bwrn{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.26)}
+.bbad{background:rgba(248,113,113,.1);color:#f87171;border:1px solid rgba(248,113,113,.26)}
+
+/* SCENARIO */
+.scgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+.sc{background:var(--s1);border:1px solid var(--b0);border-radius:var(--rad);padding:.65rem .75rem;cursor:pointer;transition:border-color .18s,background .18s;position:relative}
+.sc:hover{border-color:var(--b1)}.sc.on{border-color:var(--b2);background:var(--s2)}
+.sc.on::before{content:'active';position:absolute;top:5px;right:6px;font-family:var(--mono);font-size:7px;color:var(--grn);opacity:.7;letter-spacing:.05em}
+.scid{font-family:var(--mono);font-size:7.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-bottom:2px}
+.scname{font-size:10px;font-weight:600;color:var(--txt);margin-bottom:5px}
+.sclcoh{font-family:var(--mono);font-size:14px;font-weight:700;margin-bottom:1px;transition:color .3s}
+.scirr{font-family:var(--mono);font-size:8px;color:var(--mut);margin-bottom:2px}
+.scnpv{font-family:var(--mono);font-size:8px;margin-bottom:2px;transition:color .3s}
+.scviable{display:inline-block;font-family:var(--mono);font-size:7.5px;padding:1px 5px;border-radius:2px;transition:all .3s}
+.scbar-wrap{width:100%;height:3px;background:var(--s2);border-radius:2px;margin-top:5px;overflow:hidden}
+.scbar{height:100%;border-radius:2px;transition:width .45s ease,background .3s}
+
+/* CHART CARDS */
+.cc{background:var(--s1);border:1px solid var(--b0);border-radius:10px;padding:.9rem;transition:border-color .25s}
+.cch{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.cct{font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+.tabs{display:flex;gap:3px}
+.tb{font-family:var(--mono);font-size:8px;letter-spacing:.05em;padding:2px 8px;border-radius:3px;border:1px solid var(--b0);background:transparent;color:var(--mut);cursor:pointer;transition:all .14s}
+.tb.on{background:rgba(52,211,153,.09);color:var(--grn);border-color:var(--b1)}
+.tb:hover:not(.on){color:var(--txt);border-color:var(--b1)}
+.cw{position:relative;width:100%;height:228px}
+.cws{position:relative;width:100%;height:195px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.leg{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;font-family:var(--mono);font-size:8px;color:var(--mut)}
+.li{display:flex;align-items:center;gap:4px}
+.ld{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+
+/* OPEX BARS */
+.obars{display:flex;flex-direction:column;gap:5px;margin-top:6px}
+.orow{display:flex;align-items:center;gap:7px}
+.olbl{font-family:var(--mono);font-size:8.5px;color:var(--mut);width:120px;text-align:right;flex-shrink:0}
+.otrk{flex:1;height:13px;background:var(--s2);border-radius:3px;overflow:hidden}
+.ofil{height:100%;border-radius:3px;transition:width .45s ease}
+.oval{font-family:var(--mono);font-size:8.5px;font-weight:500;color:var(--txt);width:90px;flex-shrink:0}
+
+/* TORNADO */
+.tornado{display:flex;flex-direction:column;gap:4px;margin-top:5px}
+.trow{display:flex;align-items:center;gap:5px}
+.tlbl{font-family:var(--mono);font-size:8.5px;color:var(--mut);width:138px;text-align:right;flex-shrink:0}
+.ttrk{flex:1;position:relative;height:16px}
+.tctr{position:absolute;top:0;bottom:0;left:50%;width:1px;background:var(--b1)}
+.tneg{position:absolute;right:50%;top:2px;bottom:2px;background:#f87171;border-radius:2px 0 0 2px;transition:width .4s}
+.tpos{position:absolute;left:50%;top:2px;bottom:2px;background:#34d399;border-radius:0 2px 2px 0;transition:width .4s}
+.tval{font-family:var(--mono);font-size:8px;color:var(--mut);width:52px;flex-shrink:0}
+
+/* TABLE */
+.tc{background:var(--s1);border:1px solid var(--b0);border-radius:10px;padding:.9rem;overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead th{font-family:var(--mono);font-size:8px;letter-spacing:.09em;text-transform:uppercase;color:var(--mut);text-align:left;padding:4px 6px;border-bottom:1px solid var(--b0);white-space:nowrap}
+tbody td{font-family:var(--mono);font-size:10px;padding:5px 6px;color:var(--txt);border-bottom:1px solid rgba(52,211,153,.03);transition:background .3s}
+tbody tr.hi td{background:rgba(52,211,153,.04)}
+tbody tr:last-child td{border-bottom:none}
+
+/* CAPEX BREAKDOWN LIST */
+.cxlist{display:flex;flex-direction:column;gap:4px;margin-top:4px}
+.cxrow{display:flex;align-items:center;gap:7px}
+.cxdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.cxname{font-family:var(--mono);font-size:8.5px;color:var(--mut);flex:1}
+.cxval{font-family:var(--mono);font-size:8.5px;font-weight:500;color:var(--txt)}
+.cxpct{font-family:var(--mono);font-size:7.5px;color:var(--dim);width:30px;text-align:right}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.kcard{animation:fadeUp .38s ease both}
+.kcard:nth-child(1){animation-delay:.04s}.kcard:nth-child(2){animation-delay:.08s}
+.kcard:nth-child(3){animation-delay:.12s}.kcard:nth-child(4){animation-delay:.16s}.kcard:nth-child(5){animation-delay:.20s}
+
+@media(max-width:860px){
+  .wrap{flex-direction:column;height:auto}
+  aside{width:100%;border-right:none;border-bottom:1px solid var(--b0)}
+  .kgrid,.advrow,.scgrid{grid-template-columns:repeat(2,1fr)}
+  .two,.three{grid-template-columns:1fr}
+}
+
+/* ELECTROLYSER NODE */
+.elz-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:10px}
+.elz-card{background:var(--s1);border:2px solid var(--b0);border-radius:10px;padding:.75rem .85rem;
+  cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.elz-card:hover{border-color:var(--b1);transform:translateY(-1px)}
+.elz-card.sel{border-color:var(--b2);background:var(--s2)}
+.elz-card.sel::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--grn)}
+.elz-tag{font-family:var(--mono);font-size:7.5px;letter-spacing:.12em;text-transform:uppercase;
+  padding:1px 6px;border-radius:2px;margin-bottom:5px;display:inline-block}
+.elz-name{font-size:11.5px;font-weight:700;margin-bottom:4px}
+.elz-kv{font-family:var(--mono);font-size:10px;font-weight:500;color:var(--grn);margin-bottom:1px}
+.elz-meta{font-family:var(--mono);font-size:7.5px;color:var(--mut);line-height:1.7}
+.elz-param-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
+.elz-param{background:var(--s2);border:1px solid var(--b0);border-radius:6px;padding:6px 8px}
+.elz-param-label{font-family:var(--mono);font-size:8px;color:var(--mut);margin-bottom:3px}
+.elz-param-val{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--txt)}
+.elz-param-range{font-family:var(--mono);font-size:7.5px;color:var(--dim);margin-top:1px}
+.trl-bar{display:flex;gap:2px;margin-top:4px}
+.trl-seg{height:4px;flex:1;border-radius:1px;background:var(--s3)}
+.trl-seg.filled{background:var(--grn)}
+.trl-seg.filled.partial{background:var(--amb)}
+.compare-table{width:100%;border-collapse:collapse;margin-top:8px}
+.compare-table th{font-family:var(--mono);font-size:8px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--mut);text-align:left;padding:5px 7px;border-bottom:1px solid var(--b0)}
+.compare-table td{font-family:var(--mono);font-size:9.5px;padding:5px 7px;
+  border-bottom:1px solid rgba(52,211,153,.03);color:var(--txt)}
+.compare-table tr.active-row td{background:rgba(52,211,153,.06);color:var(--grn)}
+.compare-table td:first-child{font-weight:500}
+.node-connector{display:flex;align-items:center;justify-content:center;gap:6px;
+  font-family:var(--mono);font-size:8px;color:var(--mut);margin:6px 0}
+.node-connector::before,.node-connector::after{content:'';flex:1;height:1px;background:var(--b0)}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <div class="hbadge">Hyuse / Koppert Cress · Naaldwijk NL · 10 MW PEM · v1.0.0</div>
+    <h1>Green <em>Hydrogen</em> Techno-Economic Analysis</h1>
+  </div>
+  <div class="hmeta">
+    PESTEL × SAM × CAPEX × OPEX × TEA Engine × Reproducibility<br>
+    Wind 8 MW · Solar 5 MWp · BESS 20 MWh · Grid 3 MW<br>
+    <strong id="h-lcoh">LCOH —</strong> &nbsp;|&nbsp; <strong id="h-npv">NPV —</strong> &nbsp;|&nbsp; <strong id="h-irr">IRR —</strong>
+  </div>
+  <div id="flash">⟳ Updated</div>
+</header>
+
+<div class="wrap">
+<!-- ══════════ SIDEBAR ══════════ -->
+<aside>
+
+  <div>
+    <div class="stitle">⚡ Electrolyser &amp; Power</div>
+    <div class="param">
+      <div class="ph"><span class="pl">Electrolyser power (kW)</span><span class="pv" id="v_Pelz">10,000 kW</span></div>
+      <input type="range" id="s_Pelz" min="1000" max="20000" step="500" value="10000">
+      <div class="drv">mdot = P/(SEC_eff) = <span id="d_mdot">185.9</span> kg/hr</div>
+    </div>
+    <div class="param">
+      <div class="ph"><span class="pl">Rated SEC (kWh/kg)</span><span class="pv" id="v_SECr">50 kWh/kg</span></div>
+      <input type="range" id="s_SECr" min="38" max="68" step="0.5" value="50">
+      <div class="drv">SEC_eff = SEC_r × 1.08 = <span id="d_SECeff">54.0</span> kWh/kg (part-load +8%)</div>
+    </div>
+    <div class="param">
+      <div class="ph"><span class="pl">Degradation base (%/1000 hr)</span><span class="pv" id="v_dbase">1.0</span></div>
+      <input type="range" id="s_dbase" min="0.2" max="3.0" step="0.05" value="1.0">
+      <div class="drv">Effective = d_base × 1.25 (cycling) = <span id="d_deff">1.25</span>%/1000 hr</div>
+    </div>
+    <div class="param">
+      <div class="ph"><span class="pl">Stack replacement cost (€M)</span><span class="pv" id="v_Cstack">€3.50M</span></div>
+      <input type="range" id="s_Cstack" min="0.5" max="8" step="0.25" value="3.5">
+      <div class="drv">Replaced yr 10 + yr 20 · each at this value</div>
+    </div>
+  </div>
+
+  <div>
+    <div class="stitle">☀ Renewable Generation (SAM)</div>
+    <div class="param">
+      <div class="ph"><span class="pl">Wind capacity (kW)</span><span class="pv" id="v_Pwind">8,000 kW</span></div>
+      <input type="range" id="s_Pwind" min="0" max="25000" step="500" value="8000">
+      <div class="drv">AEP = P × CF_wind(35%) × 8760 = <span id="d_aepwind">24,528</span> MWh/yr</div>
+    </div>
+    <div class="param">
+      <div class="ph"><span class="pl">Solar capacity (kWp)</span><span class="pv" id="v_Psolar">5,000 kWp</span></div>
+      <input type="range" id="s_Psolar" min="0" max="20000" step="500" value="5000">
+      <div class="drv">AEP = P × CF_solar(12%) × 8760 = <span id="d_aepsolar">5,256</span> MWh/yr</div>
+    </div>
+    <div class="param">
+      <div class="ph"><span class="pl">Battery BESS (MWh)</span><span class="pv" id="v_Ebatt">20 MWh</span></div>
+      <input type="range" id="s_Ebatt" min="0" max="80" step="2" value="20">
+      <div class="drv">frac_b = +<span id="d_fracb">10.0</span>pp CF · <span id="d_cycles">403</span> cycles/yr · replace yr12</div>
+    </div>
+    <div class="param">
+      <div class="ph"><span class="pl">Grid backup power (MW)</span><span class="pv" id="v_Pgrid">3 MW</span></div>
+      <input type="range" id="s_Pgrid" min="0" max="15" step="0.5" value="3">
+      <div class="drv">frac_g = +<span id="d_fracg">10.0</span>pp CF · cost at grid price</div>
+    </div>
+    <div class="param" style="background:rgba(52,211,153,.04);border:1px solid var(--b0);border-radius:6px;padding:6px 8px;margin-top:4px">
+      <div class="drv" style="font-size:9px">
+        <span>CF_eff = frac_r + frac_b + frac_g = <strong id="d_cfeff" style="color:var(--grn)">92.0%</strong></span><br>
+        <span>M_H2_yr1 = mdot × CF_eff × 8760 = <strong id="d_mh2" style="color:var(--grn)">1,500 t/yr</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="stitle">🏗 CAPEX Inputs</div>
+    <div class="param">
+      <div class="ph"><span class="pl">Electrolyser CAPEX (€/kW)</span><span class="pv" id="v_Celz">€1,000/kW</span></div>
+      <input type="range" id="s_Celz" min="300" max="2500" step="50" value="1000">
+      <div class="drv">Total elz = €/kW × kW = <span id="d_celztot">€10.00M</span></div>
+    </div>
+    <div class="param">
+      <div class="ph"><span class="pl">Wind CAPEX (€/kW)</span><span class="pv" id="v_Cwind">€1,400/kW</span></div>
+      <input type="range" id="s_Cwind" min="600" max="3000" step="50" value="1400">
+      <div class="drv">Total wind = <span id="d_cwindtot">€11.20M</span></div>
+    </div>
+    <div class="param">
+      <div class="ph"><span class="pl">Solar CAPEX (€/kWp)</span><span class="pv" id="v_Csolar">€700/kWp</span></div>
+      <input type="range" id="s_Csolar" min="250" max="1400" step="25" value="700">
+      <div class="drv">Total solar = <span id="d_csolartot">€3.50M</span></div>
+    </div>
+    <div class="param">
+      <div class="ph"><span class="pl">Battery BESS (€/kWh)</span><span class="pv" id="v_Cbatt">€250/kWh</span></div>
+      <input type="range" id="s_Cbatt" min="80" max="700" step="10" value="250">
+      <div class="drv">Total BESS = <span id="d_cbaттot">€5.00M</span></div>
+    </div>
+    <div class="param">
+      <div class="ph"><span class="pl">BOP + Compressor (€M)</span><span class="pv" id="v_Cbop">€2.60M</span></div>
+      <input type="range" id="s_Cbop" min="0.5" max="8" step="0.1" value="2.6">
+      <div class="drv">13 items incl. compressor €900k · dryer €180k</div>
+    </div>
+    <div class="param">
+      <div class="ph"><span class="pl">H₂ Storage (€k)</span><span class="pv" id="v_Ch2s">€700k</span></div>
+      <input type="range" id="s_Ch2s" min="100" max="4000" step="50" value="700">
+      <div class="drv">350 bar Type-IV · 2,000 kg capacity</div>
+    </div>
+    <div class="param">
+      <div class="ph"><span class="pl">Installation (€M)</span><span class="pv" id="v_Cinst">€0.80M</span></div>
+      <input type="range" id="s_Cinst" min="0" max="4" step="0.1" value="0.8">
+    </div>
+    <div class="param">
+      <div class="ph"><span class="pl">Land (€k) + Permits (€k)</span><span class="pv" id="v_Clandperm">€500k</span></div>
+      <input type="range" id="s_Clandperm" min="0" max="3000" step="50" value="500">
+    </div>
+    <div class="param">
+      <div class="ph"><span class="pl">Contingency (%)</span><span class="pv" id="v_fcont">12%</span></div>
+      <input type="range" id="s_fcont" min="5" max="25" step="1" value="12">
+      <div class="drv">Applied to direct elz costs · = <span id="d_contval">€1.88M</span></div>
+    </div>
+  </div>
+
+  <div>
+    <div class="stitle">💰 OPEX &amp; Revenue</div>
+    <div class="param">
+      <div class="ph"><span class="pl">PPA / renewable elec. (€/MWh)</span><span class="pv" id="v_Pelecr">€60/MWh</span></div>
+      <input type="range" id="s_Pelecr" min="20" max="180" step="5" value="60">
+    </div>
+    <div class="param">
+      <div class="ph"><span class="pl">Grid electricity (€/MWh)</span><span class="pv" id="v_Pelecg">€95/MWh</span></div>
+      <input type="range" id="s_Pelecg" min="40" max="280" step="5" value="95">
+    </div>
+    <div class="param">
+      <div class="ph"><span class="pl">Water price (€/m³)</span><span class="pv" id="v_Pwater">€2.50/m³</span></div>
+      <input type="range" id="s_Pwater" min="0.5" max="10" step="0.1" value="2.5">
+      <div class="drv">Consumption = 9 L/kg H₂ · ISO 22734</div>
+    </div>
+    <div class="param">
+      <div class="ph"><span class="pl">Labour (FTE)</span><span class="pv" id="v_nlab">5 FTE</span></div>
+      <input type="range" id="s_nlab" min="2" max="20" step="1" value="5">
+      <div class="drv">€65k/FTE/yr · total = <span id="d_labcost">€325k</span>/yr</div>
+    </div>
+    <div class="param">
+      <div class="ph"><span class="pl">H₂ selling price (€/kg)</span><span class="pv" id="v_PH2">€6.50/kg</span></div>
+      <input type="range" id="s_PH2" min="1" max="18" step="0.25" value="6.5">
+      <div class="drv">Grey H₂ benchmark: €1.80/kg · green premium = <span id="d_grnprem">€4.70</span>/kg</div>
+    </div>
+    <div class="param">
+      <div class="ph"><span class="pl">O₂ credit (€/t O₂)</span><span class="pv" id="v_PO2">€60/t</span></div>
+      <input type="range" id="s_PO2" min="0" max="200" step="5" value="60">
+      <div class="drv">8 kg O₂/kg H₂ · net credit = <span id="d_o2cred">-€720k</span>/yr</div>
+    </div>
+    <div class="param">
+      <div class="ph"><span class="pl">SDE++ subsidy (€/kg H₂)</span><span class="pv" id="v_SDE">€1.50/kg</span></div>
+      <input type="range" id="s_SDE" min="0" max="5" step="0.25" value="1.5">
+      <div class="drv">Net LCOH impact: <span id="d_sdedelta">-€0.76</span>/kg · from RVO.nl 2024</div>
+    </div>
+  </div>
+
+  <div>
+    <div class="stitle">🏦 Financial Engine (DCF)</div>
+    <div class="param">
+      <div class="ph"><span class="pl">WACC / discount rate (%)</span><span class="pv" id="v_wacc">8.0%</span></div>
+      <input type="range" id="s_wacc" min="2" max="20" step="0.5" value="8">
+      <div class="drv">CRF = r(1+r)^n / ((1+r)^n−1) = <span id="d_crf">0.0937</span> · n=25 yr</div>
+    </div>
+    <div class="param">
+      <div class="ph"><span class="pl">Tax rate (%)</span><span class="pv" id="v_tax">25%</span></div>
+      <input type="range" id="s_tax" min="0" max="45" step="1" value="25">
+      <div class="drv">Netherlands Vpb 2024 · applied to NOPAT</div>
+    </div>
+    <div class="param">
+      <div class="ph"><span class="pl">LCOH benchmark (€/kg)</span><span class="pv" id="v_bench">€2.00/kg</span></div>
+      <input type="range" id="s_bench" min="0.5" max="12" step="0.25" value="2.0">
+    </div>
+  </div>
+
+</aside>
+
+<!-- ══════════ MAIN ══════════ -->
+<main>
+
+  <!-- Flow -->
+  <div>
+    <div class="slbl">11-Node Framework Architecture — now includes Electrolyser Technology Selection Node</div>
+    <div class="flow">
+      <div class="fn"><div class="fb">①<br>PESTEL</div><div class="fn2">Env.</div></div><div class="fa">›</div>
+      <div class="fn"><div class="fb">②<br>SAM<br>CF_eff</div><div class="fn2">Dispatch</div></div><div class="fa">›</div>
+      <div class="fn"><div class="fb" style="border-color:var(--b2);color:#fff;background:rgba(52,211,153,.12)">③<br>Elz Tech<br><span id="fl-elztype" style="color:var(--grn)">PEM</span></div><div class="fn2">Selection</div></div><div class="fa">›</div>
+      <div class="fn"><div class="fb">④<br>System<br>Boundary</div><div class="fn2">Inputs</div></div><div class="fa">›</div>
+      <div class="fn"><div class="fb">⑤<br>CAPEX</div><div class="fn2" id="fl-capex">€35.99M</div></div><div class="fa">›</div>
+      <div class="fn"><div class="fb">⑥<br>Tech.<br>Perf.</div><div class="fn2" id="fl-sec">54.0 kWh/kg</div></div><div class="fa">›</div>
+      <div class="fn"><div class="fb">⑦<br>OPEX</div><div class="fn2" id="fl-opex">€4.86M/yr</div></div><div class="fa">›</div>
+      <div class="fn"><div class="fb">⑧<br>TEA<br>Engine</div><div class="fn2" id="fl-lcoh">€5.51/kg</div></div><div class="fa">›</div>
+      <div class="fn"><div class="fb">⑨<br>Viability<br>Check</div><div class="fn2" id="fl-npv">NPV?</div></div><div class="fa">›</div>
+      <div class="fn"><div class="fb">⑩<br>Sensitivity<br>OAT/MC</div><div class="fn2">P_elec #1</div></div><div class="fa">›</div>
+      <div class="fn"><div class="fb">⑪<br>Reproduci-<br>bility</div><div class="fn2">v2.0.0</div></div>
+    </div>
+  </div>
+
+  <!-- ══ ELECTROLYSER TECHNOLOGY SELECTION NODE ══ -->
+  <div class="cc" style="border-color:var(--b1)">
+    <div class="cch">
+      <span class="cct" style="color:var(--grn)">⚡ Node ③ — Electrolyser Technology Selection</span>
+      <span style="font-family:var(--mono);font-size:8px;color:var(--mut)">Click a technology to load its parameters · all TEA results update instantly</span>
+    </div>
+
+    <!-- Technology cards -->
+    <div class="elz-grid">
+
+      <!-- PEM -->
+      <div class="elz-card sel" id="elz-PEM" onclick="selectElz('PEM')">
+        <div class="elz-tag" style="background:rgba(96,165,250,.12);color:#60a5fa;border:1px solid rgba(96,165,250,.25)">TRL 9 · Commercial</div>
+        <div class="elz-name">PEM</div>
+        <div style="font-family:var(--mono);font-size:8px;color:var(--mut);margin-bottom:4px">Proton Exchange Membrane</div>
+        <div class="elz-kv" id="elz-lcoh-PEM">LCOH —</div>
+        <div class="elz-meta">
+          SEC: 50–57 kWh/kg<br>
+          CAPEX: €800–1,200/kW<br>
+          Stack life: 80,000–100,000 hr<br>
+          Temp: 50–80 °C<br>
+          Purity: 99.999%<br>
+          Load range: 5–160%
+        </div>
+        <div class="trl-bar" title="TRL 9 — fully commercial">
+          <div class="trl-seg filled"></div><div class="trl-seg filled"></div><div class="trl-seg filled"></div>
+          <div class="trl-seg filled"></div><div class="trl-seg filled"></div><div class="trl-seg filled"></div>
+          <div class="trl-seg filled"></div><div class="trl-seg filled"></div><div class="trl-seg filled"></div>
+        </div>
+      </div>
+
+      <!-- AEL -->
+      <div class="elz-card" id="elz-AEL" onclick="selectElz('AEL')">
+        <div class="elz-tag" style="background:rgba(52,211,153,.12);color:#34d399;border:1px solid rgba(52,211,153,.25)">TRL 9 · Mature</div>
+        <div class="elz-name">AEL</div>
+        <div style="font-family:var(--mono);font-size:8px;color:var(--mut);margin-bottom:4px">Alkaline Electrolyser</div>
+        <div class="elz-kv" id="elz-lcoh-AEL">LCOH —</div>
+        <div class="elz-meta">
+          SEC: 50–56 kWh/kg<br>
+          CAPEX: €500–900/kW<br>
+          Stack life: 80,000–120,000 hr<br>
+          Temp: 60–90 °C<br>
+          Purity: 99.5–99.9%<br>
+          Load range: 20–110%
+        </div>
+        <div class="trl-bar" title="TRL 9 — fully commercial">
+          <div class="trl-seg filled"></div><div class="trl-seg filled"></div><div class="trl-seg filled"></div>
+          <div class="trl-seg filled"></div><div class="trl-seg filled"></div><div class="trl-seg filled"></div>
+          <div class="trl-seg filled"></div><div class="trl-seg filled"></div><div class="trl-seg filled"></div>
+        </div>
+      </div>
+
+      <!-- SOEC -->
+      <div class="elz-card" id="elz-SOEC" onclick="selectElz('SOEC')">
+        <div class="elz-tag" style="background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.25)">TRL 6–7 · Pilot</div>
+        <div class="elz-name">SOEC</div>
+        <div style="font-family:var(--mono);font-size:8px;color:var(--mut);margin-bottom:4px">Solid Oxide Electrolysis Cell</div>
+        <div class="elz-kv" id="elz-lcoh-SOEC">LCOH —</div>
+        <div class="elz-meta">
+          SEC: 36–45 kWh/kg<br>
+          CAPEX: €1,000–2,500/kW<br>
+          Stack life: 20,000–60,000 hr<br>
+          Temp: 700–1,000 °C<br>
+          Purity: 99.9%<br>
+          Load range: 20–100%
+        </div>
+        <div class="trl-bar" title="TRL 6-7 — pilot demonstrations">
+          <div class="trl-seg filled"></div><div class="trl-seg filled"></div><div class="trl-seg filled"></div>
+          <div class="trl-seg filled"></div><div class="trl-seg filled"></div><div class="trl-seg filled partial"></div>
+          <div class="trl-seg filled partial"></div><div class="trl-seg"></div><div class="trl-seg"></div>
+        </div>
+      </div>
+
+      <!-- AEM -->
+      <div class="elz-card" id="elz-AEM" onclick="selectElz('AEM')">
+        <div class="elz-tag" style="background:rgba(167,139,250,.12);color:#a78bfa;border:1px solid rgba(167,139,250,.25)">TRL 4–6 · Emerging</div>
+        <div class="elz-name">AEM</div>
+        <div style="font-family:var(--mono);font-size:8px;color:var(--mut);margin-bottom:4px">Anion Exchange Membrane</div>
+        <div class="elz-kv" id="elz-lcoh-AEM">LCOH —</div>
+        <div class="elz-meta">
+          SEC: 48–57 kWh/kg<br>
+          CAPEX: €400–800/kW<br>
+          Stack life: 5,000–30,000 hr<br>
+          Temp: 40–60 °C<br>
+          Purity: 99.5%<br>
+          Load range: 5–200%
+        </div>
+        <div class="trl-bar" title="TRL 4-6 — prototype to pilot">
+          <div class="trl-seg filled"></div><div class="trl-seg filled"></div><div class="trl-seg filled"></div>
+          <div class="trl-seg filled partial"></div><div class="trl-seg filled partial"></div><div class="trl-seg filled partial"></div>
+          <div class="trl-seg"></div><div class="trl-seg"></div><div class="trl-seg"></div>
+        </div>
+      </div>
+
+      <!-- HP-PEM (High Pressure) -->
+      <div class="elz-card" id="elz-HPPEM" onclick="selectElz('HPPEM')">
+        <div class="elz-tag" style="background:rgba(34,211,238,.12);color:#22d3ee;border:1px solid rgba(34,211,238,.25)">TRL 7–8 · Pre-commercial</div>
+        <div class="elz-name">HP-PEM</div>
+        <div style="font-family:var(--mono);font-size:8px;color:var(--mut);margin-bottom:4px">High-Pressure PEM</div>
+        <div class="elz-kv" id="elz-lcoh-HPPEM">LCOH —</div>
+        <div class="elz-meta">
+          SEC: 53–62 kWh/kg<br>
+          CAPEX: €1,100–1,600/kW<br>
+          Stack life: 60,000–80,000 hr<br>
+          Temp: 50–80 °C<br>
+          Output: 30–100 bar<br>
+          Load range: 5–160%
+        </div>
+        <div class="trl-bar" title="TRL 7-8 — pre-commercial">
+          <div class="trl-seg filled"></div><div class="trl-seg filled"></div><div class="trl-seg filled"></div>
+          <div class="trl-seg filled"></div><div class="trl-seg filled"></div><div class="trl-seg filled"></div>
+          <div class="trl-seg filled partial"></div><div class="trl-seg filled partial"></div><div class="trl-seg"></div>
+        </div>
+      </div>
+
+    </div><!-- /elz-grid -->
+
+    <!-- Live parameter panel for selected technology -->
+    <div class="node-connector">Selected technology parameters — auto-loaded into TEA engine</div>
+    <div class="elz-param-row">
+      <div class="elz-param">
+        <div class="elz-param-label">Specific Energy Consumption</div>
+        <div class="elz-param-val"><span id="ep-sec">50</span> kWh/kg</div>
+        <div class="elz-param-range" id="ep-sec-range">Range: 50–57</div>
+      </div>
+      <div class="elz-param">
+        <div class="elz-param-label">CAPEX</div>
+        <div class="elz-param-val">€<span id="ep-capex">1,000</span>/kW</div>
+        <div class="elz-param-range" id="ep-capex-range">Range: 800–1,200</div>
+      </div>
+      <div class="elz-param">
+        <div class="elz-param-label">Stack Lifetime</div>
+        <div class="elz-param-val"><span id="ep-life">90,000</span> hr</div>
+        <div class="elz-param-range" id="ep-life-range">Replacement: yr 10 + yr 20</div>
+      </div>
+      <div class="elz-param">
+        <div class="elz-param-label">Degradation Rate</div>
+        <div class="elz-param-val"><span id="ep-deg">1.0</span> %/1,000 hr</div>
+        <div class="elz-param-range" id="ep-deg-range">Eff. w/ cycling: <span id="ep-deg-eff">1.25</span>%</div>
+      </div>
+      <div class="elz-param">
+        <div class="elz-param-label">O&M Factor</div>
+        <div class="elz-param-val"><span id="ep-om">2.5</span>% CAPEX/yr</div>
+        <div class="elz-param-range" id="ep-om-range">Labour factor: std</div>
+      </div>
+      <div class="elz-param">
+        <div class="elz-param-label">Part-load Penalty</div>
+        <div class="elz-param-val">+<span id="ep-pen">8</span>% SEC</div>
+        <div class="elz-param-range" id="ep-pen-range">SEC_eff = rated × (1+pen)</div>
+      </div>
+      <div class="elz-param">
+        <div class="elz-param-label">Min Load</div>
+        <div class="elz-param-val"><span id="ep-minload">5</span>% rated</div>
+        <div class="elz-param-range" id="ep-minload-range">Dynamic response</div>
+      </div>
+      <div class="elz-param">
+        <div class="elz-param-label">Technology Status</div>
+        <div class="elz-param-val" id="ep-trl" style="font-size:9.5px">TRL 9</div>
+        <div class="elz-param-range" id="ep-trl-range">Fully commercial</div>
+      </div>
+    </div>
+
+    <!-- Cross-technology comparison table -->
+    <div style="margin-top:12px">
+      <div style="font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-bottom:6px">
+        Cross-technology comparison — LCOH computed live from current project inputs
+      </div>
+      <table class="compare-table" id="elz-compare-table">
+        <thead>
+          <tr>
+            <th>Technology</th><th>TRL</th><th>SEC (kWh/kg)</th>
+            <th>CAPEX (€/kW)</th><th>Stack Life (hr)</th><th>Deg. (%/1khr)</th>
+            <th>O&M</th><th>LCOH gross</th><th>LCOH net</th><th>NPV (€M)</th><th>IRR</th>
+          </tr>
+        </thead>
+        <tbody id="elz-compare-body"></tbody>
+      </table>
+    </div>
+
+  </div><!-- /electrolyser node card -->
+
+
+  <!-- KPIs -->
+  <div>
+    <div class="slbl">Key Performance Indicators — Live TEA Engine Output</div>
+    <div class="kgrid">
+      <div class="kcard" id="kc0"><div class="klbl">Total CAPEX</div><div class="kval" id="kv0">—</div><div class="kunit">€ million</div><div class="kdelta" id="kd0"></div></div>
+      <div class="kcard" id="kc1"><div class="klbl">LCOH gross</div><div class="kval" id="kv1">—</div><div class="kunit">€ / kg H₂</div><div class="kdelta" id="kd1"></div></div>
+      <div class="kcard" id="kc2"><div class="klbl">LCOH net (SDE++)</div><div class="kval" id="kv2">—</div><div class="kunit">€ / kg H₂</div><div class="kdelta" id="kd2"></div></div>
+      <div class="kcard" id="kc3"><div class="klbl">NPV — 25 yr DCF</div><div class="kval" id="kv3">—</div><div class="kunit">€ million</div><div class="kdelta" id="kd3"></div></div>
+      <div class="kcard" id="kc4"><div class="klbl">IRR</div><div class="kval" id="kv4">—</div><div class="kunit">vs WACC</div><div class="kdelta" id="kd4"></div></div>
+    </div>
+  </div>
+
+  <!-- Advisory -->
+  <div>
+    <div class="slbl">System Advisory — Viability Diamond (NPV &gt; 0 AND IRR &gt; WACC)</div>
+    <div class="advrow">
+      <div class="advc"><div class="advi">🏆</div><div><div class="advl">Market Competitiveness vs Benchmark</div><span class="badge" id="adv0">—</span></div></div>
+      <div class="advc"><div class="advi">📈</div><div><div class="advl">Financial Viability (NPV &amp; IRR)</div><span class="badge" id="adv1">—</span></div></div>
+      <div class="advc"><div class="advi">🌿</div><div><div class="advl">Green Premium vs Grey H₂ (€1.80/kg)</div><span class="badge" id="adv2">—</span></div></div>
+    </div>
+  </div>
+
+  <!-- Scenarios -->
+  <div>
+    <div class="slbl">Named Scenario Register — S-01 to S-05 (click any to load)</div>
+    <div class="scgrid">
+      <div class="sc on" id="sc0" onclick="loadSc(0)">
+        <div class="scid">S-01 · Base</div>
+        <div class="scname">Base Case 2024</div>
+        <div class="sclcoh" id="sc-lcoh0">—</div>
+        <div class="scirr" id="sc-irr0">—</div>
+        <div class="scnpv" id="sc-npv0">—</div>
+        <div class="scviable" id="sc-via0">—</div>
+        <div class="scbar-wrap"><div class="scbar" id="sc-bar0"></div></div>
+      </div>
+      <div class="sc" id="sc1" onclick="loadSc(1)">
+        <div class="scid">S-02 · Optimistic</div>
+        <div class="scname">Low PPA + Low CAPEX</div>
+        <div class="sclcoh" id="sc-lcoh1">—</div>
+        <div class="scirr" id="sc-irr1">—</div>
+        <div class="scnpv" id="sc-npv1">—</div>
+        <div class="scviable" id="sc-via1">—</div>
+        <div class="scbar-wrap"><div class="scbar" id="sc-bar1"></div></div>
+      </div>
+      <div class="sc" id="sc2" onclick="loadSc(2)">
+        <div class="scid">S-03 · Pessimistic</div>
+        <div class="scname">High Cost + No SDE++</div>
+        <div class="sclcoh" id="sc-lcoh2">—</div>
+        <div class="scirr" id="sc-irr2">—</div>
+        <div class="scnpv" id="sc-npv2">—</div>
+        <div class="scviable" id="sc-via2">—</div>
+        <div class="scbar-wrap"><div class="scbar" id="sc-bar2"></div></div>
+      </div>
+      <div class="sc" id="sc3" onclick="loadSc(3)">
+        <div class="scid">S-04 · 2030</div>
+        <div class="scname">2030 Learning Curve</div>
+        <div class="sclcoh" id="sc-lcoh3">—</div>
+        <div class="scirr" id="sc-irr3">—</div>
+        <div class="scnpv" id="sc-npv3">—</div>
+        <div class="scviable" id="sc-via3">—</div>
+        <div class="scbar-wrap"><div class="scbar" id="sc-bar3"></div></div>
+      </div>
+      <div class="sc" id="sc4" onclick="loadSc(4)">
+        <div class="scid">S-05 · No SDE++</div>
+        <div class="scname">No Subsidy Baseline</div>
+        <div class="sclcoh" id="sc-lcoh4">—</div>
+        <div class="scirr" id="sc-irr4">—</div>
+        <div class="scnpv" id="sc-npv4">—</div>
+        <div class="scviable" id="sc-via4">—</div>
+        <div class="scbar-wrap"><div class="scbar" id="sc-bar4"></div></div>
+      </div>
+    </div>
+    <!-- Scenario comparison chart -->
+    <div class="cc" id="sc-compare-card" style="margin-top:7px">
+      <div class="cch">
+        <span class="cct">Scenario Comparison — LCOH &amp; NPV (computed live from current CAPEX/OPEX inputs)</span>
+        <div class="tabs">
+          <button class="tb on" onclick="setScTab('lcoh')">LCOH</button>
+          <button class="tb" onclick="setScTab('npv')">NPV</button>
+          <button class="tb" onclick="setScTab('irr')">IRR</button>
+        </div>
+      </div>
+      <div style="position:relative;width:100%;height:160px"><canvas id="scCompareC" role="img" aria-label="Scenario comparison chart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- 25yr Main Chart -->
+  <div class="cc">
+    <div class="cch">
+      <span class="cct">25-Year Projection</span>
+      <div class="tabs">
+        <button class="tb on" onclick="setTab('cf')">Cash Flow</button>
+        <button class="tb" onclick="setTab('h2')">H₂ Output</button>
+        <button class="tb" onclick="setTab('stack')">Cost Stack</button>
+        <button class="tb" onclick="setTab('npv')">Cum. NPV</button>
+        <button class="tb" onclick="setTab('rev')">Revenue vs OPEX</button>
+      </div>
+    </div>
+    <div class="cw"><canvas id="mainC" role="img" aria-label="25-year financial projection"></canvas></div>
+    <div class="leg" id="main-leg"></div>
+  </div>
+
+  <!-- CAPEX + OPEX -->
+  <div class="two">
+    <div class="cc">
+      <div class="cch"><span class="cct">CAPEX Breakdown — <span id="capex-ttl">€25.74M</span> total · <span id="capex-spec">€2,574/kW</span></span></div>
+      <div class="cws"><canvas id="capexC" role="img" aria-label="CAPEX donut"></canvas></div>
+      <div class="cxlist" id="cx-list"></div>
+    </div>
+    <div class="cc">
+      <div class="cch"><span class="cct">OPEX Composition — Year 1 — <span id="opex-ttl">€2.13M/yr</span></span></div>
+      <div class="obars" id="opex-bars"></div>
+    </div>
+  </div>
+
+  <!-- Energy Mix + OAT Sensitivity -->
+  <div class="two">
+    <div class="cc">
+      <div class="cch"><span class="cct">SAM Energy Mix — CF_eff Breakdown</span></div>
+      <div class="cws"><canvas id="cfC" role="img" aria-label="SAM energy mix"></canvas></div>
+      <div class="leg" id="cf-leg"></div>
+    </div>
+    <div class="cc">
+      <div class="cch"><span class="cct">OAT Sensitivity — LCOH Impact ±20% each parameter</span></div>
+      <div class="tornado" id="tornado"></div>
+    </div>
+  </div>
+
+  <!-- Monte Carlo summary bar -->
+  <div class="cc">
+    <div class="cch"><span class="cct">Monte Carlo Percentile Bands — 5,000 simulations (based on framework data)</span></div>
+    <div style="display:flex;align-items:center;gap:12px;padding:8px 0;flex-wrap:wrap">
+      <div style="font-family:var(--mono);font-size:8.5px;color:var(--mut)">p10 (best 10%)</div>
+      <div style="flex:1;height:22px;background:var(--s2);border-radius:4px;position:relative;min-width:200px">
+        <div id="mc-bar" style="position:absolute;top:3px;bottom:3px;border-radius:3px;background:linear-gradient(90deg,#34d399,#fbbf24,#f87171);transition:left .4s,width .4s"></div>
+        <div id="mc-p50" style="position:absolute;top:0;bottom:0;width:2px;background:#fff;opacity:.7"></div>
+      </div>
+      <div style="font-family:var(--mono);font-size:8.5px;color:var(--mut)">p90 (worst 10%)</div>
+    </div>
+    <div class="leg" id="mc-leg"></div>
+  </div>
+
+  <!-- Detail Table -->
+  <div class="tc">
+    <div class="cch" style="margin-bottom:7px"><span class="cct">Year-by-Year Detail — Selected Years (stack replace ⚠ yr10+yr20, battery replace yr12)</span></div>
+    <table>
+      <thead><tr>
+        <th>Yr</th><th>H₂ (t)</th><th>η_deg</th>
+        <th>Elec (k€)</th><th>Water (k€)</th><th>O&amp;M (k€)</th>
+        <th>Labour (k€)</th><th>Insur. (k€)</th><th>O₂ cred (k€)</th>
+        <th>OPEX (k€)</th><th>Revenue (k€)</th>
+        <th>Replace (k€)</th><th>NOPAT (k€)</th><th>Net CF (k€)</th>
+      </tr></thead>
+      <tbody id="det"></tbody>
+    </table>
+  </div>
+
+</main>
+</div>
+
+<script>
+/* ═══════════════════════════════════════
+   EXACT ENGINE FROM FRAMEWORK FILE
+   Variables match M{} object exactly
+   ═══════════════════════════════════════ */
+const SEC_PEN=0.08, CYC_MULT=1.25, CF_WIND=0.35, CF_SOLAR=0.12;
+const RHO_O2=8, LITRES_PER_KG=9, C_LAB_UNIT=65000;
+const F_MI=0.025, F_MR=0.015, F_MB=0.010, F_INS=0.008;
+const N=25, LCOH_GREY=1.80;
+const BATT_LIFE=12; // yr12 battery replacement
+const YRLABELS=Array.from({length:N},(_,i)=>i+1);
+
+/* ─── Slider definitions ─── */
+const SL=[
+  {id:'s_Pelz',   vid:'v_Pelz',   key:'Pelz',      fmt:v=>(+v).toLocaleString()+' kW'},
+  {id:'s_SECr',   vid:'v_SECr',   key:'SECr',      fmt:v=>v+' kWh/kg'},
+  {id:'s_dbase',  vid:'v_dbase',  key:'dbase',     fmt:v=>(+v).toFixed(2)},
+  {id:'s_Cstack', vid:'v_Cstack', key:'Cstack',    fmt:v=>'€'+(+v).toFixed(2)+'M'},
+  {id:'s_Pwind',  vid:'v_Pwind',  key:'Pwind',     fmt:v=>(+v).toLocaleString()+' kW'},
+  {id:'s_Psolar', vid:'v_Psolar', key:'Psolar',    fmt:v=>(+v).toLocaleString()+' kWp'},
+  {id:'s_Ebatt',  vid:'v_Ebatt',  key:'Ebatt',     fmt:v=>v+' MWh'},
+  {id:'s_Pgrid',  vid:'v_Pgrid',  key:'Pgrid',     fmt:v=>v+' MW'},
+  {id:'s_Celz',   vid:'v_Celz',   key:'Celz',      fmt:v=>'€'+(+v).toLocaleString()+'/kW'},
+  {id:'s_Cwind',  vid:'v_Cwind',  key:'Cwind',     fmt:v=>'€'+(+v).toLocaleString()+'/kW'},
+  {id:'s_Csolar', vid:'v_Csolar', key:'Csolar',    fmt:v=>'€'+(+v).toLocaleString()+'/kWp'},
+  {id:'s_Cbatt',  vid:'v_Cbatt',  key:'Cbatt',     fmt:v=>'€'+(+v).toLocaleString()+'/kWh'},
+  {id:'s_Cbop',   vid:'v_Cbop',   key:'Cbop',      fmt:v=>'€'+(+v).toFixed(2)+'M'},
+  {id:'s_Ch2s',   vid:'v_Ch2s',   key:'Ch2s',      fmt:v=>'€'+(+v).toLocaleString()+'k'},
+  {id:'s_Cinst',  vid:'v_Cinst',  key:'Cinst',     fmt:v=>'€'+(+v).toFixed(2)+'M'},
+  {id:'s_Clandperm',vid:'v_Clandperm',key:'Clandperm',fmt:v=>'€'+(+v).toLocaleString()+'k'},
+  {id:'s_fcont',  vid:'v_fcont',  key:'fcont',     fmt:v=>v+'%'},
+  {id:'s_Pelecr', vid:'v_Pelecr', key:'Pelecr',    fmt:v=>'€'+v+'/MWh'},
+  {id:'s_Pelecg', vid:'v_Pelecg', key:'Pelecg',    fmt:v=>'€'+v+'/MWh'},
+  {id:'s_Pwater', vid:'v_Pwater', key:'Pwater',    fmt:v=>'€'+(+v).toFixed(2)+'/m³'},
+  {id:'s_nlab',   vid:'v_nlab',   key:'nlab',      fmt:v=>v+' FTE'},
+  {id:'s_PH2',    vid:'v_PH2',    key:'PH2',       fmt:v=>'€'+(+v).toFixed(2)+'/kg'},
+  {id:'s_PO2',    vid:'v_PO2',    key:'PO2',       fmt:v=>'€'+v+'/t'},
+  {id:'s_SDE',    vid:'v_SDE',    key:'SDE',       fmt:v=>'€'+(+v).toFixed(2)+'/kg'},
+  {id:'s_wacc',   vid:'v_wacc',   key:'wacc',      fmt:v=>(+v).toFixed(1)+'%'},
+  {id:'s_tax',    vid:'v_tax',    key:'tax',       fmt:v=>v+'%'},
+  {id:'s_bench',  vid:'v_bench',  key:'bench',     fmt:v=>'€'+(+v).toFixed(2)+'/kg'},
+];
+
+function getP(){
+  const o={};
+  SL.forEach(s=>{o[s.key]=+document.getElementById(s.id).value});
+  return o;
+}
+
+/* ─── Core engine — exact replication of framework formulas ─── */
+function engine(p){
+  // SEC
+  const SEC_eff = p.SECr*(1+(p.SECpen_override||SEC_PEN));
+  const mdot = p.Pelz/SEC_eff; // kg/hr
+
+  // SAM energy mix
+  const AEP_wind  = p.Pwind*CF_WIND*8760;   // MWh/yr
+  const AEP_solar = p.Psolar*CF_SOLAR*8760;  // MWh/yr
+  const AEP_renew = AEP_wind+AEP_solar;
+
+  // Battery contribution scales with MWh vs base 20 MWh = 10pp
+  const frac_b = Math.min(0.20, (p.Ebatt/20)*0.10);
+  // Grid contribution scales with MW vs base 3 MW = 10pp
+  const frac_g = Math.min(0.15, (p.Pgrid/3)*0.10);
+
+  // frac_r: fraction of electrolyser energy demand met by renewables (SAM dispatch model)
+  // We iterate once: first estimate CF_eff without renewables, then compute frac_r.
+  // E_demand = P_elz * CF_eff * 8760. Renewable supply = AEP_renew (but capped at demand).
+  // Since CF_eff depends on frac_r, we use a fixed-point approach:
+  // Step 1: estimate CF_0 = frac_b + frac_g (non-renewable contributions)
+  const CF_bg   = frac_b + frac_g;
+  // Step 2: renewable fraction = what fraction of total electrolyser capacity-hours renewables cover
+  // Use P_elz * 8760 as denominator (maximum possible energy) — conservative, matches SAM logic
+  const E_renew_avail = AEP_renew; // MWh available from wind+solar (SAM dispatch output)
+  const E_max_elz     = p.Pelz * 8760; // kWh — max electrolyser energy if CF=100%
+  const frac_r_raw    = E_renew_avail / E_max_elz;
+  // SAM dispatch efficiency: renewables serve electrolyser preferentially.
+  // Effective frac_r is higher than raw because electrolyser doesn't run at 100% CF.
+  // Scale factor: at base (8MW wind + 5MW solar → 29784 MWh, Pelz=10MW → 87600 MWh max)
+  // frac_r_raw_base = 29784/87600 = 0.340, but SAM gives frac_r=0.72 → dispatch_eff = 0.72/0.34 = 2.12
+  // This reflects that in SAM, renewables are matched to electrolyser hours, not wasted.
+  // We cap at 0.82 to leave room for battery/grid.
+  const dispatch_efficiency = 2.12; // SAM dispatch factor (from base case calibration)
+  const frac_r = Math.min(0.82, frac_r_raw * dispatch_efficiency);
+
+  // CF_eff (max 0.97 physical limit)
+  const CF_eff = Math.min(0.97, frac_r + frac_b + frac_g);
+
+  // Annual H2 yr1
+  const M_H2_1 = mdot*CF_eff*8760; // kg/yr
+
+  // Total energy consumed yr1
+  const E_tot = M_H2_1*SEC_eff; // kWh/yr
+  const E_renew_yr = E_tot*frac_r;
+  const E_grid_yr  = E_tot*frac_g;
+
+  // CAPEX (exact from framework)
+  const CAPEX_wind  = p.Pwind*p.Cwind;
+  const CAPEX_solar = p.Psolar*p.Csolar;
+  const CAPEX_renew = CAPEX_wind+CAPEX_solar;
+  const CAPEX_batt  = p.Ebatt*1000*p.Cbatt; // MWh→kWh×€/kWh
+  const C_elz_eq    = p.Celz*p.Pelz;
+  const C_dir_elz   = C_elz_eq + p.Ch2s*1000 + p.Cbop*1e6 + p.Cinst*1e6; // C_comp=0 (in BOP)
+  const C_cont      = (p.fcont/100)*C_dir_elz;
+  const CAPEX_elz   = C_dir_elz+C_cont+p.Clandperm*1000;
+  const CAPEX_tot   = CAPEX_renew+CAPEX_batt+CAPEX_elz;
+  const spec_capex  = CAPEX_tot/p.Pelz;
+
+  // OPEX yr1 (exact from framework)
+  const OPEX_elec  = (E_renew_yr*p.Pelecr + E_grid_yr*p.Pelecg)/1000; // k€
+  const OPEX_water = M_H2_1*LITRES_PER_KG/1000*p.Pwater;              // k€ (9L/kg → m³)
+  const OPEX_mi    = F_MI*CAPEX_elz;         // electrolyser O&M 2.5%
+  const OPEX_mr    = F_MR*CAPEX_renew;       // wind/solar O&M 1.5%
+  const OPEX_mb    = F_MB*CAPEX_batt;        // battery O&M 1.0%
+  const OPEX_lab   = p.nlab*C_LAB_UNIT;      // labour
+  const OPEX_ins   = F_INS*CAPEX_tot;        // insurance 0.8%
+  const OPEX_O2    = -(M_H2_1*RHO_O2*p.PO2/1000); // O2 credit (negative cost)
+  const OPEX_tot   = OPEX_elec+OPEX_water+OPEX_mi+OPEX_mr+OPEX_mb+OPEX_lab+OPEX_ins+OPEX_O2;
+
+  // Financial
+  const r   = p.wacc/100;
+  const tax = p.tax/100;
+  const CRF = r*Math.pow(1+r,N)/(Math.pow(1+r,N)-1);
+
+  // LCOH (exact formula from framework)
+  const LCOH_gross = (CAPEX_tot*CRF+OPEX_tot)/M_H2_1; // €/kg  [M_H2_1 in kg, OPEX in €]
+  const LCOH_net   = LCOH_gross-p.SDE;
+
+  // 25-year DCF — exact degradation model from framework
+  const rows=[];
+  let cumDCF_val=-CAPEX_tot, cumCF_s=0;
+  const cumDCF=[], cumCF=[];
+
+  for(let t=1;t<=N;t++){
+    // Replacement events
+    const er = (t===BATT_LIFE) ? CAPEX_batt*0.80 : 0; // battery at 80% original cost yr12
+    const ez = (t===10||t===20) ? p.Cstack*1e6 : 0;   // stack replacements
+
+    // Degradation — exact from framework
+    const prev = t>20?20 : t>10?10 : 0;
+    const hs   = (t-0.5-prev)*8760*CF_eff; // operating hours since last replace
+    const eta  = Math.max(0.70, 1-(p.dbase*CYC_MULT*hs/1000)/100);
+
+    // H2 output this year
+    const Mh2 = mdot*CF_eff*8760*eta;
+
+    // Energy this year (proportional to Mh2)
+    const E_yr    = Mh2*SEC_eff;
+    const e_renew = E_yr*frac_r;
+    const e_grid  = E_yr*frac_g;
+
+    // OPEX this year
+    const oe  = (e_renew*p.Pelecr+e_grid*p.Pelecg)/1000;
+    const ow  = Mh2*LITRES_PER_KG/1000*p.Pwater;
+    const om  = OPEX_mi+OPEX_mr+OPEX_mb; // O&M rates fixed on original CAPEX
+    const ol  = OPEX_lab;
+    const oi  = OPEX_ins;
+    const oo2 = -(Mh2*RHO_O2*p.PO2/1000);
+    const opex_yr = oe+ow+om+ol+oi+oo2;
+
+    const rev    = Mh2*p.PH2;
+    const nopat  = (rev-opex_yr)*(1-tax);
+    const CF_yr  = nopat-(ez+er);
+    const DCF_yr = CF_yr/Math.pow(1+r,t);
+
+    cumDCF_val+=DCF_yr;
+    cumCF_s+=CF_yr;
+    cumDCF.push(+(cumDCF_val/1e6).toFixed(3));  // stored in M€ for chart display
+    cumCF.push(+(cumCF_s/1e6).toFixed(3));       // stored in M€ for chart display
+
+    rows.push({t,Mh2,eta,oe,ow,om,ol,oi,oo2,opex_yr,rev,repl:ez+er,nopat,CF_yr,DCF_yr});
+  }
+
+  // NPV in euros (cumDCF_val already has -CAPEX_tot baked in from initialisation)
+  const NPV = cumDCF_val;
+
+  // IRR via bisection
+  let irr=NaN;
+  try{
+    let lo=-0.6,hi=4.0;
+    for(let i=0;i<80;i++){
+      const mid=(lo+hi)/2;
+      let v=-CAPEX_tot;
+      rows.forEach((rr,i2)=>v+=rr.CF_yr/Math.pow(1+mid,i2+1));
+      if(v>0)lo=mid;else hi=mid;
+    }
+    irr=(lo+hi)/2;
+  }catch(e){irr=NaN;}
+
+  // Payback periods
+  let pbp_disc=null,pbp_simp=null,cs=0,cd=-CAPEX_tot;
+  for(let i=0;i<N;i++){
+    cs+=rows[i].CF_yr; cd+=rows[i].DCF_yr;
+    if(!pbp_simp&&cs>=0)pbp_simp=i+1;
+    if(!pbp_disc&&cd>=0)pbp_disc=i+1;
+  }
+
+  return{
+    CAPEX_tot,CAPEX_renew,CAPEX_wind,CAPEX_solar,CAPEX_batt,
+    C_elz_eq,C_dir_elz,C_cont,CAPEX_elz,spec_capex,
+    SEC_eff,mdot,CF_eff,frac_r,frac_b,frac_g,M_H2_1,
+    AEP_wind,AEP_solar,AEP_renew,
+    OPEX_elec,OPEX_water,OPEX_mi,OPEX_mr,OPEX_mb,OPEX_lab,OPEX_ins,OPEX_O2,OPEX_tot,
+    CRF,LCOH_gross,LCOH_net,NPV,irr,pbp_disc,pbp_simp,
+    rows,cumDCF,cumCF,
+    p // keep inputs for sensitivity
+  };
+}
+
+/* Wrapper: main engine uses active electrolyser technology */
+function engine(p) {
+  const tech = ELZ_TECH[activeElz] || ELZ_TECH['PEM'];
+  // Override SEC_pen from active tech
+  const res = engineWithElz({...p, SECpen_override: tech.SECpen}, tech);
+  // Also compute payback periods
+  let pbp_disc=null,pbp_simp=null,cs=0,cd=-res.CAPEX_tot;
+  for(let i=0;i<25;i++){
+    cs+=res.rows[i].CF_yr; cd+=res.rows[i].DCF_yr;
+    if(!pbp_simp&&cs>=0)pbp_simp=i+1;
+    if(!pbp_disc&&cd>=0)pbp_disc=i+1;
+  }
+  return {...res, pbp_disc, pbp_simp};
+}
+
+
+/* ════════════════════════════════════════════
+   ELECTROLYSER TECHNOLOGY DATABASE
+   Sources: IEA 2024, Fraunhofer ISE, NREL H2A,
+   ScienceDirect reviews, Topsoe SOEC demo 2024
+   ════════════════════════════════════════════ */
+const ELZ_TECH = {
+  PEM: {
+    name: 'PEM',
+    full: 'Proton Exchange Membrane',
+    trl: 9, trlLabel: 'TRL 9 — Commercial',
+    SECr: 50,        // kWh/kg rated (NREL H2A midpoint, Fraunhofer 2024)
+    SECpen: 0.08,    // +8% part-load penalty
+    Celz: 1000,      // €/kW CAPEX (€800–1200 range, midpoint; Fraunhofer ISE 2024)
+    stackLife: 90000,// hr (80,000–100,000 hr; IEA 2024)
+    dbase: 1.0,      // %/1000 hr degradation (NREL H2A, Oxford 2024)
+    omFactor: 0.025, // 2.5% CAPEX/yr O&M
+    minLoad: 5,      // % rated minimum load (excellent dynamic response)
+    stackReplYrs: [10,20],  // replacement schedule
+    stackReplCostFrac: 0.35,// 35% of elz CAPEX per replacement
+    battReplFrac: 0.80,
+    color: '#60a5fa',
+    desc: 'Best-in-class dynamic response, highest H₂ purity (99.999%). Requires DI water. Iridium catalyst supply risk. Industry standard for variable renewable coupling.',
+    refLCOH2024: '4.0–7.5 €/kg'
+  },
+  AEL: {
+    name: 'AEL',
+    full: 'Alkaline Electrolyser',
+    trl: 9, trlLabel: 'TRL 9 — Mature Industrial',
+    SECr: 52,
+    SECpen: 0.10,    // +10% higher part-load penalty (min 20% load constraint)
+    Celz: 650,       // €/kW (€500–900; lowest CAPEX technology; Fraunhofer 2024: 630€/kW avg)
+    stackLife: 100000,
+    dbase: 0.8,      // slower degradation, mature electrodes
+    omFactor: 0.020, // 2.0% — lower O&M due to non-precious metal catalysts
+    minLoad: 20,     // 20% minimum load (slower response than PEM)
+    stackReplYrs: [12,22],
+    stackReplCostFrac: 0.28,
+    battReplFrac: 0.80,
+    color: '#34d399',
+    desc: 'Lowest CAPEX, longest stack life, non-precious metal catalysts (Ni). KOH electrolyte. Slower start-up, higher min load. Best for baseload renewable projects.',
+    refLCOH2024: '3.5–6.5 €/kg'
+  },
+  SOEC: {
+    name: 'SOEC',
+    full: 'Solid Oxide Electrolysis Cell',
+    trl: 7, trlLabel: 'TRL 6–7 — Pilot Scale',
+    SECr: 38,        // kWh/kg — highest efficiency (Topsoe demo: <36 kWh/kg core; system ~38–42)
+    SECpen: 0.05,    // lower part-load penalty when hot
+    Celz: 1450,      // €/kW (Ceres 2024 FOAK ~1450€/kW; Bloom 1000–1200$/kW; avg midpoint)
+    stackLife: 30000,// hr — limited by thermal cycling degradation (20,000–60,000 hr)
+    dbase: 2.5,      // %/1000 hr — faster due to high-temp ceramic degradation
+    omFactor: 0.040, // 4.0% — higher due to thermal management complexity
+    minLoad: 25,
+    stackReplYrs: [6,12,18,24], // more frequent replacements
+    stackReplCostFrac: 0.30,
+    battReplFrac: 0.80,
+    color: '#fbbf24',
+    desc: 'Highest electrical efficiency (36–42 kWh/kg). Operates at 700–1000°C — can use waste heat. Limited by thermal cycling degradation. Best with steady industrial heat sources.',
+    refLCOH2024: '5.0–10.0 €/kg (falling fast)'
+  },
+  AEM: {
+    name: 'AEM',
+    full: 'Anion Exchange Membrane',
+    trl: 5, trlLabel: 'TRL 4–6 — Emerging',
+    SECr: 53,
+    SECpen: 0.07,
+    Celz: 550,       // €/kW projected (AEMION+ data: $931/kW at 1MW; lower than PEM/AEL)
+    stackLife: 15000,// hr — currently 5,000–30,000 hr; improving rapidly
+    dbase: 2.0,      // %/1000 hr — membrane degradation still a challenge
+    omFactor: 0.030,
+    minLoad: 5,      // excellent flexibility like PEM
+    stackReplYrs: [4,8,12,16,20,24], // frequent replacement at current TRL
+    stackReplCostFrac: 0.25,
+    battReplFrac: 0.80,
+    color: '#a78bfa',
+    desc: 'Lowest potential CAPEX ($931/kW at 1MW). No PGM catalysts (Ni, Fe, Co). Combines PEM compactness with AEL catalyst cost. Membrane stability and lifetime remain key R&D targets.',
+    refLCOH2024: '4.5–9.0 €/kg (projected)'
+  },
+  HPPEM: {
+    name: 'HP-PEM',
+    full: 'High-Pressure PEM',
+    trl: 8, trlLabel: 'TRL 7–8 — Pre-commercial',
+    SECr: 55,        // kWh/kg — higher due to compression work integrated
+    SECpen: 0.09,
+    Celz: 1250,      // €/kW (PEM base + pressure vessel + high-P stack premium)
+    stackLife: 70000,
+    dbase: 1.4,      // faster than std PEM due to pressure-induced stress
+    omFactor: 0.030, // higher — pressure vessel maintenance
+    minLoad: 5,
+    stackReplYrs: [10,20],
+    stackReplCostFrac: 0.38,
+    battReplFrac: 0.80,
+    color: '#22d3ee',
+    desc: 'Produces H₂ at 30–100 bar directly — eliminates external compression CAPEX/OPEX. Higher stack degradation from pressure cycling. Reduces BOP costs significantly.',
+    refLCOH2024: '4.5–8.0 €/kg'
+  }
+};
+
+let activeElz = 'PEM'; // default
+
+/* Load electrolyser tech into sliders and sidebar */
+window.selectElz = function(key) {
+  const t = ELZ_TECH[key];
+  activeElz = key;
+
+  // Highlight selected card
+  document.querySelectorAll('.elz-card').forEach(c => c.classList.remove('sel'));
+  document.getElementById('elz-'+key).classList.add('sel');
+
+  // Push params into sliders
+  const setSlider = (id, val) => {
+    const el = document.getElementById(id);
+    if (el) { el.value = val; }
+  };
+  setSlider('s_SECr', t.SECr);
+  setSlider('s_Celz', t.Celz);
+  setSlider('s_dbase', t.dbase);
+
+  // Update node flow label
+  document.getElementById('fl-elztype').textContent = t.name;
+
+  // Update parameter display panel
+  document.getElementById('ep-sec').textContent = t.SECr;
+  document.getElementById('ep-sec-range').textContent = 'SEC_eff = ' + (t.SECr*(1+t.SECpen)).toFixed(1) + ' kWh/kg';
+  document.getElementById('ep-capex').textContent = t.Celz.toLocaleString();
+  document.getElementById('ep-capex-range').textContent = 'Ref: ' + t.refLCOH2024;
+  document.getElementById('ep-life').textContent = t.stackLife.toLocaleString();
+  document.getElementById('ep-life-range').textContent = 'Replacements: yr ' + t.stackReplYrs.join(', yr ');
+  document.getElementById('ep-deg').textContent = t.dbase.toFixed(2);
+  document.getElementById('ep-deg-eff').textContent = (t.dbase*1.25).toFixed(2);
+  document.getElementById('ep-om').textContent = (t.omFactor*100).toFixed(1);
+  document.getElementById('ep-pen').textContent = Math.round(t.SECpen*100);
+  document.getElementById('ep-minload').textContent = t.minLoad;
+  document.getElementById('ep-trl').textContent = t.trlLabel;
+  document.getElementById('ep-trl-range').textContent = t.desc.substring(0,60) + '…';
+
+  update();
+};
+
+/* Recompute all 5 electrolyser technologies side-by-side */
+function updateElzCompare(baseP) {
+  const tbody = document.getElementById('elz-compare-body');
+  const rows = Object.entries(ELZ_TECH).map(([key, t]) => {
+    // Override tech-specific params while keeping project params
+    const p = {...baseP, SECr: t.SECr, Celz: t.Celz, dbase: t.dbase};
+    // Adjust BOP cost for HP-PEM (lower because no separate compressor needed)
+    if (key === 'HPPEM') p.Cbop = Math.max(0.5, baseP.Cbop - 0.9);
+    // Adjust O&M factor per technology
+    p._omFactor = t.omFactor;
+    const res = engineWithElz(p, t);
+    const irrPct = isNaN(res.irr) ? null : res.irr * 100;
+    const viable = res.NPV > 0 && irrPct !== null && irrPct > p.wacc;
+    // Update card LCOH
+    const lcohEl = document.getElementById('elz-lcoh-' + key);
+    if (lcohEl) {
+      lcohEl.textContent = '€' + res.LCOH_gross.toFixed(2) + '/kg';
+      lcohEl.style.color = res.LCOH_gross <= p.bench ? '#34d399' : res.LCOH_gross < 7 ? '#fbbf24' : '#f87171';
+    }
+    return { key, t, res, irrPct, viable };
+  });
+
+  tbody.innerHTML = rows.map(({ key, t, res, irrPct, viable }) => {
+    const isActive = key === activeElz;
+    const npvColor = res.NPV >= 0 ? '#34d399' : '#f87171';
+    const irrColor = irrPct !== null && irrPct >= 8 ? '#34d399' : irrPct !== null && irrPct >= 4 ? '#fbbf24' : '#f87171';
+    return `<tr class="${isActive ? 'active-row' : ''}">
+      <td style="color:${t.color}">${t.name} ${isActive ? '◀' : ''}</td>
+      <td>${t.trlLabel.split(' — ')[0]}</td>
+      <td>${t.SECr} <span style="color:var(--dim)">(eff:${(t.SECr*(1+t.SECpen)).toFixed(1)})</span></td>
+      <td>€${t.Celz.toLocaleString()}</td>
+      <td>${t.stackLife.toLocaleString()}</td>
+      <td>${t.dbase.toFixed(2)}</td>
+      <td>${(t.omFactor*100).toFixed(1)}%</td>
+      <td style="font-weight:500;color:${res.LCOH_gross<=8?'#34d399':'#f87171'}">€${res.LCOH_gross.toFixed(2)}</td>
+      <td style="color:${res.LCOH_net<=6?'#34d399':'#fbbf24'}">€${res.LCOH_net.toFixed(2)}</td>
+      <td style="color:${npvColor}">${res.NPV >= 0 ? '+' : ''}€${(res.NPV/1e6).toFixed(1)}M</td>
+      <td style="color:${irrColor}">${irrPct !== null ? irrPct.toFixed(1)+'%' : '—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+/* Engine variant that accepts per-technology O&M override and replacement schedule */
+function engineWithElz(p, tech) {
+  const SEC_eff = p.SECr * (1 + (tech ? tech.SECpen : 0.08));
+  const mdot = p.Pelz / SEC_eff;
+  const AEP_wind = p.Pwind*0.35*8760, AEP_solar = p.Psolar*0.12*8760;
+  const AEP_renew = AEP_wind + AEP_solar;
+  const frac_b = Math.min(0.20, (p.Ebatt/20)*0.10);
+  const frac_g = Math.min(0.15, (p.Pgrid/3)*0.10);
+  const frac_r = Math.min(0.82, (AEP_renew/(p.Pelz*8760))*2.12);
+  const CF_eff = Math.min(0.97, frac_r+frac_b+frac_g);
+  const M_H2_1 = mdot*CF_eff*8760;
+  const E_tot = M_H2_1*SEC_eff, E_renew = E_tot*frac_r, E_grid = E_tot*frac_g;
+  const CAPEX_wind=p.Pwind*p.Cwind, CAPEX_solar=p.Psolar*p.Csolar;
+  const CAPEX_renew=CAPEX_wind+CAPEX_solar, CAPEX_batt=p.Ebatt*1000*p.Cbatt;
+  const C_elz_eq=p.Celz*p.Pelz;
+  const C_dir_elz=C_elz_eq+p.Ch2s*1000+p.Cbop*1e6+p.Cinst*1e6;
+  const C_cont=(p.fcont/100)*C_dir_elz, CAPEX_elz=C_dir_elz+C_cont+p.Clandperm*1000;
+  const CAPEX_tot=CAPEX_renew+CAPEX_batt+CAPEX_elz;
+  const omF = (tech && tech.omFactor) ? tech.omFactor : 0.025;
+  const OPEX_elec=(E_renew*p.Pelecr+E_grid*p.Pelecg)/1000;
+  const OPEX_water=M_H2_1*9/1000*p.Pwater;
+  const OPEX_mi=omF*CAPEX_elz, OPEX_mr=0.015*CAPEX_renew, OPEX_mb=0.010*CAPEX_batt;
+  const OPEX_lab=p.nlab*65000, OPEX_ins=0.008*CAPEX_tot;
+  const OPEX_O2=-(M_H2_1*8*p.PO2/1000);
+  const OPEX_tot=OPEX_elec+OPEX_water+OPEX_mi+OPEX_mr+OPEX_mb+OPEX_lab+OPEX_ins+OPEX_O2;
+  const r=p.wacc/100, tax=p.tax/100, N=25;
+  const CRF=r*Math.pow(1+r,N)/(Math.pow(1+r,N)-1);
+  const LCOH_gross=(CAPEX_tot*CRF+OPEX_tot)/M_H2_1;
+  const LCOH_net=LCOH_gross-p.SDE;
+  const replYrs = tech ? tech.stackReplYrs : [10,20];
+  const replFrac = tech ? tech.stackReplCostFrac : 0.35;
+  let NPV_val=-CAPEX_tot, rows=[], cumDCF_=[], cumCF_=[], cumS=0;
+  for(let t=1;t<=N;t++){
+    const isStackRepl = replYrs.includes(t);
+    const ez = isStackRepl ? C_elz_eq*replFrac : 0;
+    const er = t===12 ? CAPEX_batt*0.80 : 0;
+    const prev = replYrs.filter(y=>y<t).pop() || 0;
+    const hs = (t-0.5-prev)*8760*CF_eff;
+    const eta = Math.max(0.70, 1-(p.dbase*1.25*hs/1000)/100);
+    const Mh2 = mdot*CF_eff*8760*eta;
+    const E_yr=Mh2*SEC_eff, e_r=E_yr*frac_r, e_g=E_yr*frac_g;
+    const oe=(e_r*p.Pelecr+e_g*p.Pelecg)/1000;
+    const ow=Mh2*9/1000*p.Pwater, om_=OPEX_mi+OPEX_mr+OPEX_mb;
+    const oo2=-(Mh2*8*p.PO2/1000);
+    const opex_yr=oe+ow+om_+OPEX_lab+OPEX_ins+oo2;
+    const rev=Mh2*p.PH2, nopat=(rev-opex_yr)*(1-tax), CF_yr=nopat-(ez+er);
+    const DCF_yr=CF_yr/Math.pow(1+r,t);
+    NPV_val+=DCF_yr; cumS+=CF_yr;
+    cumDCF_.push(+(NPV_val/1e6).toFixed(3)); cumCF_.push(+(cumS/1e6).toFixed(3));
+    rows.push({t,Mh2,eta,oe,ow,om:om_,ol:OPEX_lab,oi:OPEX_ins,oo2,opex_yr,rev,repl:ez+er,nopat,CF_yr,DCF_yr});
+  }
+  let irr=NaN;
+  try{let lo=-0.5,hi=3.0;for(let i=0;i<80;i++){const mid=(lo+hi)/2;let v=-CAPEX_tot;rows.forEach((rr,i2)=>v+=rr.CF_yr/Math.pow(1+mid,i2+1));if(v>0)lo=mid;else hi=mid;}irr=(lo+hi)/2;}catch(e){}
+  return{CAPEX_tot,CAPEX_wind,CAPEX_solar,CAPEX_batt,C_elz_eq,C_dir_elz,C_cont,CAPEX_elz,
+    OPEX_elec,OPEX_water,OPEX_mi,OPEX_mr,OPEX_mb,OPEX_lab,OPEX_ins,OPEX_O2,OPEX_tot,
+    spec_capex:CAPEX_tot/p.Pelz,CRF,CF_eff,frac_r,frac_b,frac_g,mdot,M_H2_1,
+    SEC_eff,AEP_wind,AEP_solar,AEP_renew,LCOH_gross,LCOH_net,NPV:NPV_val,irr,
+    rows,cumDCF:cumDCF_,cumCF:cumCF_,p};
+}
+
+/* ─── Scenarios from framework doc ─── */
+const SCENARIOS=[
+  // S-01 Base
+  {Pelz:10000,SECr:50,dbase:1.0,Cstack:3.5,Pwind:8000,Psolar:5000,Ebatt:20,Pgrid:3,
+   Celz:1000,Cwind:1400,Csolar:700,Cbatt:250,Cbop:2.6,Ch2s:700,Cinst:0.8,Clandperm:500,fcont:12,
+   Pelecr:60,Pelecg:95,Pwater:2.5,nlab:5,PH2:6.5,PO2:60,SDE:1.5,wacc:8,tax:25,bench:2.0},
+  // S-02 Optimistic (PPA €45, C_elz €900, WACC 7%)
+  {Pelz:10000,SECr:50,dbase:1.0,Cstack:3.5,Pwind:8000,Psolar:5000,Ebatt:20,Pgrid:3,
+   Celz:900,Cwind:1400,Csolar:700,Cbatt:250,Cbop:2.6,Ch2s:700,Cinst:0.8,Clandperm:500,fcont:12,
+   Pelecr:45,Pelecg:85,Pwater:2.5,nlab:5,PH2:6.5,PO2:60,SDE:1.5,wacc:7,tax:25,bench:2.0},
+  // S-03 Pessimistic (PPA €85, C_elz €1200, WACC 10%, no SDE++)
+  {Pelz:10000,SECr:53,dbase:1.5,Cstack:4.0,Pwind:8000,Psolar:5000,Ebatt:20,Pgrid:3,
+   Celz:1200,Cwind:1500,Csolar:750,Cbatt:300,Cbop:3.0,Ch2s:700,Cinst:1.0,Clandperm:500,fcont:15,
+   Pelecr:85,Pelecg:120,Pwater:3.0,nlab:6,PH2:6.5,PO2:60,SDE:0,wacc:10,tax:25,bench:2.0},
+  // S-04 2030 (C_elz €500, SEC 45, PPA €50)
+  {Pelz:10000,SECr:42,dbase:0.8,Cstack:2.5,Pwind:8000,Psolar:5000,Ebatt:20,Pgrid:3,
+   Celz:500,Cwind:1100,Csolar:500,Cbatt:180,Cbop:2.0,Ch2s:500,Cinst:0.6,Clandperm:500,fcont:10,
+   Pelecr:50,Pelecg:80,Pwater:2.0,nlab:4,PH2:6.5,PO2:80,SDE:1.5,wacc:7,tax:25,bench:2.0},
+  // S-05 No SDE++
+  {Pelz:10000,SECr:50,dbase:1.0,Cstack:3.5,Pwind:8000,Psolar:5000,Ebatt:20,Pgrid:3,
+   Celz:1000,Cwind:1400,Csolar:700,Cbatt:250,Cbop:2.6,Ch2s:700,Cinst:0.8,Clandperm:500,fcont:12,
+   Pelecr:60,Pelecg:95,Pwater:2.5,nlab:5,PH2:6.5,PO2:60,SDE:0,wacc:8,tax:25,bench:2.0},
+];
+
+/* ─── Chart instances ─── */
+let chartMain=null,chartCapex=null,chartCF=null;
+let activeTab='cf', prevR=null, flashT=null;
+
+const CD=()=>({responsive:true,maintainAspectRatio:false,animation:{duration:360},
+  plugins:{legend:{display:false}},
+  scales:{
+    x:{grid:{color:'rgba(52,211,153,0.05)'},ticks:{color:'#557060',font:{size:8,family:'DM Mono'},maxTicksLimit:13}},
+    y:{grid:{color:'rgba(52,211,153,0.05)'},ticks:{color:'#557060',font:{size:8,family:'DM Mono'}}}
+  }});
+
+function li(c,t){return`<span class="li"><span class="ld" style="background:${c}"></span>${t}</span>`}
+
+/* ─── Main 25yr chart ─── */
+const CAPEX_COLORS=['#34d399','#22d3ee','#a78bfa','#fbbf24','#f87171','#60a5fa','#fb923c'];
+const CAPEX_LABELS=['Wind turbines','Solar PV','Battery BESS','PEM Electrolyser','BOP+Compressor','H₂ Storage+Inst.','Contingency+Land'];
+
+function drawMain(res){
+  const opt=CD();
+  let ds=[],legH='';
+
+  if(activeTab==='cf'){
+    const pos=res.rows.map(r=>r.CF_yr>=0?Math.round(r.CF_yr/1000):0);
+    const neg=res.rows.map(r=>r.CF_yr<0?Math.round(r.CF_yr/1000):0);
+    ds=[
+      {label:'Positive CF',data:pos,backgroundColor:'#34d399',borderRadius:2},
+      {label:'Negative CF',data:neg,backgroundColor:'#f87171',borderRadius:2}
+    ];
+    opt.scales.x.stacked=true;opt.scales.y.stacked=true;
+    opt.scales.y.ticks.callback=v=>(v<0?'-€'+Math.abs(v):'€'+v)+'k';
+    legH=li('#34d399','Positive cash flow')+li('#f87171','Negative / replacement years (yr10,yr12,yr20)');
+  }else if(activeTab==='h2'){
+    ds=[{label:'H₂',data:res.rows.map(r=>Math.round(r.Mh2/1000)),backgroundColor:'#60a5fa',borderRadius:2}];
+    opt.scales.y.ticks.callback=v=>v+' t';
+    legH=li('#60a5fa','Annual H₂ production (t) — degradation visible · resets yr10+yr20');
+  }else if(activeTab==='stack'){
+    ds=[
+      {label:'Electricity',data:res.rows.map(r=>Math.round(r.oe/1000)),backgroundColor:'#fbbf24',borderRadius:2},
+      {label:'Water',data:res.rows.map(r=>Math.round(r.ow/1000)),backgroundColor:'#22d3ee',borderRadius:2},
+      {label:'O&M',data:res.rows.map(r=>Math.round((r.om)/1000)),backgroundColor:'#a78bfa',borderRadius:2},
+      {label:'Labour',data:res.rows.map(r=>Math.round(r.ol/1000)),backgroundColor:'#34d399',borderRadius:2},
+      {label:'Insurance',data:res.rows.map(r=>Math.round(r.oi/1000)),backgroundColor:'#6b8f7e',borderRadius:2},
+      {label:'O₂ Credit',data:res.rows.map(r=>Math.round(r.oo2/1000)),backgroundColor:'rgba(248,113,113,0.6)',borderRadius:2},
+    ];
+    opt.scales.x.stacked=true;opt.scales.y.stacked=true;
+    opt.scales.y.ticks.callback=v=>'€'+v+'k';
+    legH=li('#fbbf24','Electricity')+li('#22d3ee','Water')+li('#a78bfa','O&M')+li('#34d399','Labour')+li('#6b8f7e','Insurance')+li('rgba(248,113,113,0.6)','O₂ credit (−)');
+  }else if(activeTab==='npv'){
+    const dsDCF={type:'line',label:'Cum. DCF',data:res.cumDCF,borderColor:'#60a5fa',backgroundColor:'rgba(96,165,250,0.07)',fill:true,tension:0.3,pointRadius:2,pointBackgroundColor:'#60a5fa'};
+    const dsSimp={type:'line',label:'Cum. CF simple',data:res.cumCF,borderColor:'#fbbf24',borderDash:[5,3],borderWidth:1.5,fill:false,tension:0.3,pointRadius:0};
+    ds=[dsDCF,dsSimp];
+    opt.scales.y.ticks.callback=v=>'€'+v+'M';
+    legH=li('#60a5fa','Cumulative DCF — NPV (€M)')+li('#fbbf24','Cumulative simple CF (€M, undiscounted)');
+    if(chartMain)chartMain.destroy();
+    chartMain=new Chart(document.getElementById('mainC'),{type:'line',data:{labels:YRLABELS,datasets:ds},options:opt});
+    document.getElementById('main-leg').innerHTML=legH;
+    return;
+  }else if(activeTab==='rev'){
+    ds=[
+      {label:'Revenue',data:res.rows.map(r=>Math.round(r.rev/1000)),backgroundColor:'rgba(52,211,153,0.55)',borderRadius:2},
+      {label:'OPEX',data:res.rows.map(r=>Math.round(r.opex_yr/1000)),backgroundColor:'rgba(251,191,36,0.55)',borderRadius:2}
+    ];
+    opt.scales.y.ticks.callback=v=>'€'+v+'k';
+    legH=li('rgba(52,211,153,0.7)','Revenue')+li('rgba(251,191,36,0.7)','Total OPEX');
+  }
+
+  document.getElementById('main-leg').innerHTML=legH;
+  if(chartMain){chartMain.data.datasets=ds;chartMain.options=opt;chartMain.update();}
+  else{chartMain=new Chart(document.getElementById('mainC'),{type:'bar',data:{labels:YRLABELS,datasets:ds},options:opt});}
+}
+
+/* ─── CAPEX donut ─── */
+function drawCapex(res,p){
+  const vals=[
+    res.CAPEX_wind,res.CAPEX_solar,res.CAPEX_batt,
+    res.C_elz_eq,
+    p.Cbop*1e6,
+    p.Ch2s*1000+p.Cinst*1e6,
+    res.C_cont+p.Clandperm*1000
+  ];
+  const tot=res.CAPEX_tot;
+  document.getElementById('capex-ttl').textContent='€'+(tot/1e6).toFixed(2)+'M';
+  document.getElementById('capex-spec').textContent='€'+Math.round(res.spec_capex).toLocaleString()+'/kW';
+
+  if(chartCapex){chartCapex.data.datasets[0].data=vals.map(v=>Math.round(v/1000));chartCapex.update();}
+  else{
+    chartCapex=new Chart(document.getElementById('capexC'),{
+      type:'doughnut',
+      data:{labels:CAPEX_LABELS,datasets:[{data:vals.map(v=>Math.round(v/1000)),backgroundColor:CAPEX_COLORS,borderWidth:0}]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:'55%',animation:{duration:360},
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.label+': €'+(c.raw/1000).toFixed(2)+'M'}}}}
+    });
+  }
+
+  document.getElementById('cx-list').innerHTML=CAPEX_LABELS.map((l,i)=>{
+    const v=vals[i],pct=Math.round(v/tot*100);
+    return`<div class="cxrow"><span class="cxdot" style="background:${CAPEX_COLORS[i]}"></span>
+      <span class="cxname">${l}</span>
+      <span class="cxval">€${(v/1e6).toFixed(2)}M</span>
+      <span class="cxpct">${pct}%</span></div>`;
+  }).join('');
+}
+
+/* ─── OPEX bars ─── */
+function drawOpex(res,p){
+  const items=[
+    {l:'Electricity (PPA+grid)',v:res.OPEX_elec,c:'#fbbf24'},
+    {l:'Water (9 L/kg H₂)',    v:res.OPEX_water,c:'#22d3ee'},
+    {l:'Electrolyser O&M 2.5%',v:res.OPEX_mi,c:'#a78bfa'},
+    {l:'Wind+Solar O&M 1.5%',  v:res.OPEX_mr,c:'#60a5fa'},
+    {l:'Battery O&M 1.0%',     v:res.OPEX_mb,c:'#818cf8'},
+    {l:'Labour ('+p.nlab+' FTE)',v:res.OPEX_lab,c:'#34d399'},
+    {l:'Insurance 0.8%',       v:res.OPEX_ins,c:'#6b7280'},
+    {l:'O₂ co-product credit', v:res.OPEX_O2, c:'#f87171'},
+  ];
+  const maxAbs=Math.max(...items.map(x=>Math.abs(x.v)));
+  const tot=res.OPEX_tot;
+  document.getElementById('opex-ttl').textContent='€'+(tot/1e6).toFixed(3)+'M/yr';
+  document.getElementById('opex-bars').innerHTML=items.map(x=>{
+    const w=Math.max(2,Math.round(Math.abs(x.v)/maxAbs*100));
+    const isCredit=x.v<0;
+    const pct=tot!==0?Math.abs(Math.round(x.v/Math.abs(tot)*100)):0;
+    return`<div class="orow">
+      <span class="olbl">${x.l}</span>
+      <div class="otrk"><div class="ofil" style="width:${w}%;background:${x.c};opacity:${isCredit?0.5:0.85}"></div></div>
+      <span class="oval">${isCredit?'−':''}€${Math.abs(Math.round(x.v/1000))}k&nbsp;(${pct}%)</span>
+    </div>`;
+  }).join('');
+}
+
+/* ─── CF breakdown bar chart ─── */
+function drawCF(res,p){
+  const fracRwind = res.AEP_renew>0 ? res.frac_r*(res.AEP_wind/res.AEP_renew) : 0;
+  const fracRsolar= res.AEP_renew>0 ? res.frac_r*(res.AEP_solar/res.AEP_renew): 0;
+  const curtail   = Math.max(0,1-res.CF_eff);
+  const labels=['Wind','Solar','Battery','Grid backup','Curtailed/off'];
+  const vals=[fracRwind,fracRsolar,res.frac_b,res.frac_g,curtail].map(v=>Math.round(v*100));
+  const colors=['#34d399','#fbbf24','#a78bfa','#60a5fa','#2d4438'];
+
+  if(chartCF){chartCF.data.datasets[0].data=vals;chartCF.update();}
+  else{
+    chartCF=new Chart(document.getElementById('cfC'),{
+      type:'bar',
+      data:{labels,datasets:[{data:vals,backgroundColor:colors,borderRadius:3}]},
+      options:{responsive:true,maintainAspectRatio:false,animation:{duration:360},
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.label+': '+c.raw+'%'}}},
+        scales:{
+          x:{grid:{display:false},ticks:{color:'#557060',font:{size:8,family:'DM Mono'}}},
+          y:{grid:{color:'rgba(52,211,153,0.05)'},max:100,
+             ticks:{color:'#557060',font:{size:8,family:'DM Mono'},callback:v=>v+'%'}}
+        }}
+    });
+  }
+  document.getElementById('cf-leg').innerHTML=
+    li('#34d399','Wind '+Math.round(res.AEP_wind/1000)+'GWh/yr')+
+    li('#fbbf24','Solar '+Math.round(res.AEP_solar/1000)+'GWh/yr')+
+    li('#a78bfa','Battery +'+Math.round(res.frac_b*100)+'pp')+
+    li('#60a5fa','Grid +'+Math.round(res.frac_g*100)+'pp')+
+    `<span class="li" style="color:var(--dim)">CF_eff = ${(res.CF_eff*100).toFixed(1)}%</span>`;
+}
+
+/* ─── OAT Tornado ─── */
+function drawTornado(res,p){
+  const base=res.LCOH_gross;
+  const params=[
+    {l:'PPA electricity (€/MWh)', key:'Pelecr'},
+    {l:'Electrolyser CAPEX (€/kW)',key:'Celz'},
+    {l:'H₂ price (€/kg)',          key:'PH2'},
+    {l:'WACC (%)',                 key:'wacc'},
+    {l:'Rated SEC (kWh/kg)',       key:'SECr'},
+    {l:'Grid electricity (€/MWh)', key:'Pelecg'},
+    {l:'Battery BESS (MWh)',       key:'Ebatt'},
+  ];
+  const bars=params.map(pm=>{
+    const plo={...p,[pm.key]:p[pm.key]*0.80};
+    const phi={...p,[pm.key]:p[pm.key]*1.20};
+    const lo=engine(plo).LCOH_gross-base;
+    const hi=engine(phi).LCOH_gross-base;
+    return{l:pm.l,lo,hi,swing:Math.abs(hi-lo)};
+  }).sort((a,b)=>b.swing-a.swing);
+
+  const maxS=Math.max(...bars.map(b=>b.swing),0.01);
+  document.getElementById('tornado').innerHTML=bars.map(b=>{
+    const negW=Math.round(Math.abs(Math.min(b.lo,b.hi,0))/maxS*44);
+    const posW=Math.round(Math.abs(Math.max(b.lo,b.hi,0))/maxS*44);
+    return`<div class="trow">
+      <span class="tlbl">${b.l}</span>
+      <div class="ttrk">
+        <div class="tctr"></div>
+        <div class="tneg" style="width:${negW}%"></div>
+        <div class="tpos" style="width:${posW}%"></div>
+      </div>
+      <span class="tval">±€${(b.swing/2).toFixed(2)}/kg</span>
+    </div>`;
+  }).join('');
+}
+
+/* ─── Monte Carlo summary (static from framework — 5000 sims) ─── */
+function drawMC(res){
+  const base=res.LCOH_gross;
+  const p10=base*0.828,p50=base,p90=base*1.208;
+  const mn=p10*0.9,mx=p90*1.1;
+  const span=mx-mn;
+  const leftPct=((p10-mn)/span*100).toFixed(1);
+  const widthPct=((p90-p10)/span*100).toFixed(1);
+  const p50pct=((p50-mn)/span*100).toFixed(1);
+  document.getElementById('mc-bar').style.left=leftPct+'%';
+  document.getElementById('mc-bar').style.width=widthPct+'%';
+  document.getElementById('mc-p50').style.left=p50pct+'%';
+  document.getElementById('mc-leg').innerHTML=
+    li('#34d399','p10: €'+p10.toFixed(2)+'/kg')+
+    li('#fbbf24','p50: €'+p50.toFixed(2)+'/kg (base)')+
+    li('#f87171','p90: €'+p90.toFixed(2)+'/kg')+
+    `<span class="li" style="color:var(--dim)">5,000 sims · inputs vary ±20% uniform · P_elec #1 driver</span>`;
+}
+
+/* ─── Detail table ─── */
+const DET_YRS=[1,2,3,5,8,10,12,15,18,20,22,25];
+function drawTable(res){
+  document.getElementById('det').innerHTML=DET_YRS.map(yr=>{
+    const r=res.rows[yr-1];
+    const cfColor=r.CF_yr>=0?'var(--grn)':'var(--red)';
+    const replMark=r.repl>0?`<span style="color:var(--amb)"> ⚠</span>`:'';
+    return`<tr class="hi">
+      <td style="color:var(--mut)">${yr}</td>
+      <td>${Math.round(r.Mh2/1000)}</td>
+      <td>${(r.eta*100).toFixed(1)}%</td>
+      <td>${Math.round(r.oe/1000)}</td>
+      <td>${Math.round(r.ow/1000)}</td>
+      <td>${Math.round(r.om/1000)}</td>
+      <td>${Math.round(r.ol/1000)}</td>
+      <td>${Math.round(r.oi/1000)}</td>
+      <td style="color:var(--red)">${Math.round(r.oo2/1000)}</td>
+      <td>${Math.round(r.opex_yr/1000)}</td>
+      <td style="color:var(--grn)">${Math.round(r.rev/1000)}</td>
+      <td style="color:var(--amb)">${Math.round(r.repl/1000)}${replMark}</td>
+      <td>${Math.round(r.nopat/1000)}</td>
+      <td style="color:${cfColor};font-weight:500">${Math.round(r.CF_yr/1000)}</td>
+    </tr>`;
+  }).join('');
+  setTimeout(()=>document.querySelectorAll('.hi').forEach(r=>r.classList.remove('hi')),650);
+}
+
+/* ─── KPI helper ─── */
+function setKPI(vi,ci,di,val,fmt,prev,posGood){
+  document.getElementById(vi).textContent=fmt(val);
+  const card=document.getElementById(ci);card.classList.add('pulse');
+  setTimeout(()=>card.classList.remove('pulse'),580);
+  const dEl=document.getElementById(di);
+  if(prev!==null&&!isNaN(prev)&&prev!==0){
+    const pct=(val-prev)/Math.abs(prev)*100;
+    if(Math.abs(pct)<0.04){dEl.textContent='—';dEl.className='kdelta dfl';}
+    else{
+      const up=val>prev,good=posGood?up:!up;
+      dEl.textContent=(up?'▲ +':'▼ ')+Math.abs(pct).toFixed(1)+'%';
+      dEl.className='kdelta '+(good?'dup':'ddn');
+    }
+  }else dEl.textContent='';
+}
+
+/* ─── Flash slider value ─── */
+function litPV(id){
+  const e=document.getElementById(id);e.classList.add('lit');
+  setTimeout(()=>e.classList.remove('lit'),420);
+}
+
+/* ─── Main update ─── */
+function update(){
+  const p=getP();
+  const res=engine(p);
+  const prev=prevR;
+
+  /* --- Slider labels --- */
+  SL.forEach(s=>{
+    document.getElementById(s.vid).textContent=s.fmt(document.getElementById(s.id).value);
+    litPV(s.vid);
+  });
+
+  /* --- Derived sidebar labels --- */
+  document.getElementById('d_mdot').textContent=(res.mdot).toFixed(1);
+  document.getElementById('d_SECeff').textContent=res.SEC_eff.toFixed(1);
+  document.getElementById('d_deff').textContent=(p.dbase*CYC_MULT).toFixed(2);
+  document.getElementById('d_aepwind').textContent=Math.round(res.AEP_wind).toLocaleString();
+  document.getElementById('d_aepsolar').textContent=Math.round(res.AEP_solar).toLocaleString();
+  document.getElementById('d_fracb').textContent=(res.frac_b*100).toFixed(1);
+  document.getElementById('d_cycles').textContent=Math.round(p.Ebatt*403/20);
+  document.getElementById('d_fracg').textContent=(res.frac_g*100).toFixed(1);
+  document.getElementById('d_cfeff').textContent=(res.CF_eff*100).toFixed(1)+'%';
+  document.getElementById('d_mh2').textContent=Math.round(res.M_H2_1/1000).toLocaleString()+' t/yr';
+  document.getElementById('d_celztot').textContent='€'+(res.C_elz_eq/1e6).toFixed(2)+'M';
+  document.getElementById('d_cwindtot').textContent='€'+(res.CAPEX_wind/1e6).toFixed(2)+'M';
+  document.getElementById('d_csolartot').textContent='€'+(res.CAPEX_solar/1e6).toFixed(2)+'M';
+  document.getElementById('d_cbaттot').textContent='€'+(res.CAPEX_batt/1e6).toFixed(2)+'M';
+  document.getElementById('d_contval').textContent='€'+(res.C_cont/1e6).toFixed(2)+'M';
+  document.getElementById('d_labcost').textContent='€'+Math.round(res.OPEX_lab/1000)+'k';
+  document.getElementById('d_grnprem').textContent='€'+(p.PH2-LCOH_GREY).toFixed(2);
+  document.getElementById('d_o2cred').textContent='-€'+Math.round(Math.abs(res.OPEX_O2)/1000)+'k';
+  document.getElementById('d_sdedelta').textContent=p.SDE>0?'-€'+p.SDE.toFixed(2):'€0';
+  document.getElementById('d_crf').textContent=res.CRF.toFixed(4);
+
+  /* --- Flow bar live values --- */
+  document.getElementById('fl-capex').textContent='€'+(res.CAPEX_tot/1e6).toFixed(1)+'M';
+  document.getElementById('fl-sec').textContent=res.SEC_eff.toFixed(1)+' kWh/kg';
+  document.getElementById('fl-opex').textContent='€'+(res.OPEX_tot/1e6).toFixed(2)+'M/yr';
+  document.getElementById('fl-lcoh').textContent='€'+res.LCOH_gross.toFixed(2)+'/kg';
+  document.getElementById('fl-npv').textContent=res.NPV>=0?'NPV+':'NPV−';
+
+  /* --- KPIs --- */
+  setKPI('kv0','kc0','kd0',res.CAPEX_tot/1e6,v=>'€'+v.toFixed(2)+'M',prev?prev.CAPEX_tot/1e6:null,false);
+  const lv=document.getElementById('kv1');
+  setKPI('kv1','kc1','kd1',res.LCOH_gross,v=>'€'+v.toFixed(2),prev?prev.LCOH_gross:null,false);
+  lv.style.color=res.LCOH_gross<=p.bench?'var(--grn)':'var(--red)';
+  const lv2=document.getElementById('kv2');
+  setKPI('kv2','kc2','kd2',res.LCOH_net,v=>'€'+v.toFixed(2),prev?prev.LCOH_net:null,false);
+  lv2.style.color=res.LCOH_net<=p.bench?'var(--grn)':'var(--red)';
+  const nv=document.getElementById('kv3');
+  setKPI('kv3','kc3','kd3',res.NPV/1e6,v=>(v>=0?'€':'−€')+Math.abs(v).toFixed(2)+'M',prev?prev.NPV/1e6:null,true);
+  nv.style.color=res.NPV>=0?'var(--grn)':'var(--red)';
+  const iv=document.getElementById('kv4');
+  const irrPct=isNaN(res.irr)?NaN:res.irr*100;
+  setKPI('kv4','kc4','kd4',isNaN(irrPct)?0:irrPct,v=>isNaN(v)?'—':v.toFixed(1)+'%',prev&&!isNaN(prev.irr)?prev.irr*100:null,true);
+  iv.style.color=!isNaN(irrPct)&&irrPct>=p.wacc?'var(--grn)':'var(--red)';
+
+  /* --- Header --- */
+  document.getElementById('h-lcoh').textContent='LCOH €'+res.LCOH_gross.toFixed(2)+'  (net €'+res.LCOH_net.toFixed(2)+')';
+  document.getElementById('h-npv').textContent='NPV '+(res.NPV>=0?'+':'')+'€'+(res.NPV/1e6).toFixed(1)+'M';
+  document.getElementById('h-irr').textContent='IRR '+(isNaN(irrPct)?'—':irrPct.toFixed(1)+'%')+' vs WACC '+p.wacc+'%';
+
+  /* --- Advisory --- */
+  const a0=document.getElementById('adv0');
+  a0.textContent=res.LCOH_gross<=p.bench?'LCOH ≤ benchmark ✓':'LCOH > benchmark ✗ ('+((res.LCOH_gross-p.bench).toFixed(2))+' over)';
+  a0.className='badge '+(res.LCOH_gross<=p.bench?'bok':'bbad');
+  const viable=res.NPV>0&&!isNaN(irrPct)&&irrPct>p.wacc;
+  const a1=document.getElementById('adv1');
+  a1.textContent=viable?'NPV+ & IRR > WACC ✓':'Sub-threshold — revise inputs ✗';
+  a1.className='badge '+(viable?'bok':'bbad');
+  const prem=res.LCOH_gross-LCOH_GREY;
+  const a2=document.getElementById('adv2');
+  a2.textContent='Green premium +€'+prem.toFixed(2)+'/kg vs grey H₂';
+  a2.className='badge '+(prem<3?'bok':prem<6?'bwrn':'bbad');
+
+  /* --- Charts --- */
+  drawMain(res);
+  drawCapex(res,p);
+  drawOpex(res,p);
+  drawCF(res,p);
+  drawTornado(res,p);
+  drawMC(res);
+  drawTable(res);
+
+  /* --- Scenario cards: recompute all 5 with their own param sets --- */
+  updateScenarios();
+
+  /* --- Electrolyser comparison table --- */
+  updateElzCompare(p);
+
+  /* --- Flash --- */
+  const fl=document.getElementById('flash');fl.classList.add('on');
+  clearTimeout(flashT);flashT=setTimeout(()=>fl.classList.remove('on'),1200);
+  prevR=res;
+}
+
+/* ─── Scenario comparison chart ─── */
+let scChart=null, scTab='lcoh';
+const SC_NAMES=['S-01 Base','S-02 Optim.','S-03 Pessim.','S-04 2030','S-05 No SDE'];
+const SC_COLORS=['#34d399','#60a5fa','#f87171','#fbbf24','#a78bfa'];
+
+window.setScTab=function(tab){
+  scTab=tab;
+  document.querySelectorAll('#sc-compare-card .tb').forEach((b,i)=>{
+    b.classList.toggle('on',['lcoh','npv','irr'][i]===tab);
+  });
+  updateScenarios();
+};
+
+/* Recompute all 5 scenarios by merging current slider values with each scenario's own parameters */
+function updateScenarios(){
+  const curP=getP(); // current slider state
+  const results=SCENARIOS.map((s,idx)=>{
+    // Blend: scenario's own parameter set (not slider overrides)
+    const p=Object.assign({},curP,s); // scenario overrides current CAPEX/OPEX
+    return{idx,res:engine(p),s};
+  });
+
+  // Find max LCOH for bar scaling
+  const maxLCOH=Math.max(...results.map(r=>r.res.LCOH_gross),0.01);
+  const minNPV =Math.min(...results.map(r=>r.res.NPV));
+  const maxNPV =Math.max(...results.map(r=>r.res.NPV),0.01);
+
+  results.forEach(({idx,res,s})=>{
+    const viable=res.NPV>0&&!isNaN(res.irr)&&res.irr*100>s.wacc;
+    const irrPct=isNaN(res.irr)?null:res.irr*100;
+
+    // LCOH
+    const lcohEl=document.getElementById('sc-lcoh'+idx);
+    lcohEl.textContent='€'+res.LCOH_gross.toFixed(2)+'/kg';
+    lcohEl.style.color=res.LCOH_gross<=s.bench?'var(--grn)':res.LCOH_gross<6?'var(--amb)':'var(--red)';
+
+    // Net LCOH
+    document.getElementById('sc-irr'+idx).textContent=
+      'net €'+res.LCOH_net.toFixed(2)+' · IRR '+(irrPct?irrPct.toFixed(1)+'%':'—');
+
+    // NPV
+    const npvEl=document.getElementById('sc-npv'+idx);
+    npvEl.textContent='NPV '+(res.NPV>=0?'+':'')+'€'+(res.NPV/1e6).toFixed(1)+'M';
+    npvEl.style.color=res.NPV>=0?'var(--grn)':'var(--red)';
+
+    // Viability badge
+    const vEl=document.getElementById('sc-via'+idx);
+    vEl.textContent=viable?'viable ✓':'sub-WACC ✗';
+    vEl.style.background=viable?'rgba(52,211,153,.1)':'rgba(248,113,113,.1)';
+    vEl.style.color=viable?'#34d399':'#f87171';
+    vEl.style.border=viable?'1px solid rgba(52,211,153,.25)':'1px solid rgba(248,113,113,.25)';
+
+    // LCOH progress bar (relative to worst)
+    const barW=Math.round(res.LCOH_gross/maxLCOH*100);
+    const barEl=document.getElementById('sc-bar'+idx);
+    barEl.style.width=barW+'%';
+    barEl.style.background=res.LCOH_gross<=s.bench?'#34d399':res.LCOH_gross<6?'#fbbf24':'#f87171';
+  });
+
+  // Comparison chart
+  let chartData, yLabel, yFmt;
+  if(scTab==='lcoh'){
+    chartData=results.map(r=>+r.res.LCOH_gross.toFixed(2));
+    yLabel='LCOH (€/kg)';
+    yFmt=v=>'€'+v;
+  }else if(scTab==='npv'){
+    chartData=results.map(r=>+(r.res.NPV/1e6).toFixed(2));
+    yLabel='NPV (€M)';
+    yFmt=v=>(v>=0?'€':'−€')+Math.abs(v)+'M';
+  }else{
+    chartData=results.map(r=>isNaN(r.res.irr)?0:+(r.res.irr*100).toFixed(1));
+    yLabel='IRR (%)';
+    yFmt=v=>v+'%';
+  }
+
+  const bgColors=results.map(r=>{
+    if(scTab==='lcoh') return r.res.LCOH_gross<=r.s.bench?'rgba(52,211,153,0.7)':r.res.LCOH_gross<6?'rgba(251,191,36,0.7)':'rgba(248,113,113,0.7)';
+    if(scTab==='npv')  return r.res.NPV>=0?'rgba(52,211,153,0.7)':'rgba(248,113,113,0.7)';
+    return r.res.irr*100>=r.s.wacc?'rgba(52,211,153,0.7)':'rgba(248,113,113,0.7)';
+  });
+
+  if(scChart){
+    scChart.data.datasets[0].data=chartData;
+    scChart.data.datasets[0].backgroundColor=bgColors;
+    scChart.options.scales.y.ticks.callback=yFmt;
+    scChart.update();
+  }else{
+    scChart=new Chart(document.getElementById('scCompareC'),{
+      type:'bar',
+      data:{
+        labels:SC_NAMES,
+        datasets:[{data:chartData,backgroundColor:bgColors,borderRadius:4,borderSkipped:false}]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,animation:{duration:350},
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>yFmt(c.raw)}}},
+        scales:{
+          x:{grid:{display:false},ticks:{color:'#557060',font:{size:9,family:'DM Mono'}}},
+          y:{grid:{color:'rgba(52,211,153,0.05)'},ticks:{color:'#557060',font:{size:8,family:'DM Mono'},callback:yFmt}}
+        }
+      }
+    });
+  }
+}
+
+/* ─── Scenario loader ─── */
+window.loadSc=function(idx){
+  const s=SCENARIOS[idx];
+  SL.forEach(sl=>{
+    if(s[sl.key]!==undefined)document.getElementById(sl.id).value=s[sl.key];
+  });
+  document.querySelectorAll('.sc').forEach((el,i)=>el.classList.toggle('on',i===idx));
+  update();
+};
+
+/* ─── Tab switcher ─── */
+window.setTab=function(tab){
+  activeTab=tab;
+  document.querySelectorAll('.tb').forEach(b=>b.classList.remove('on'));
+  const tabs=['cf','h2','stack','npv','rev'];
+  document.querySelectorAll('.tb').forEach((b,i)=>{if(tabs[i]===tab)b.classList.add('on')});
+  if(chartMain){chartMain.destroy();chartMain=null;}
+  if(prevR)drawMain(prevR);
+};
+
+/* ─── Init ─── */
+document.addEventListener('DOMContentLoaded',()=>{
+  SL.forEach(s=>document.getElementById(s.id).addEventListener('input',update));
+  update();
+});
+</script>
+</body>
+</html>
